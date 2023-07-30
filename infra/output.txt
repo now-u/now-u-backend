@@ -1,0 +1,61 @@
+CLI          
+Version      3.75.0
+Go Version   go1.20.5
+Go Compiler  gc
+
+Plugins
+NAME          VERSION
+azure-native  2.1.1
+cloudflare    5.6.0
+docker        4.3.0
+python        unknown
+
+Host     
+OS       arch
+Version  "23.0.0"
+Arch     x86_64
+
+This project is written in python: executable='/bin/python3' version='3.11.3
+'
+
+Current Stack: JElgar/now-u/dev
+
+TYPE                                        URN
+pulumi:pulumi:Stack                         urn:pulumi:dev::now-u::pulumi:pulumi:Stack::now-u-dev
+pulumi:providers:azure-native               urn:pulumi:dev::now-u::pulumi:providers:azure-native::default_2_1_1
+azure-native:resources:ResourceGroup        urn:pulumi:dev::now-u::azure-native:resources:ResourceGroup::resource-group
+azure-native:operationalinsights:Workspace  urn:pulumi:dev::now-u::azure-native:operationalinsights:Workspace::loganalytics
+azure-native:dbforpostgresql:Server         urn:pulumi:dev::now-u::azure-native:dbforpostgresql:Server::causes-service-db
+azure-native:containerregistry:Registry     urn:pulumi:dev::now-u::azure-native:containerregistry:Registry::registry
+azure-native:storage:StorageAccount         urn:pulumi:dev::now-u::azure-native:storage:StorageAccount::csstatic
+pulumi:providers:azure-native               urn:pulumi:dev::now-u::pulumi:providers:azure-native::default
+azure-native:dbforpostgresql:Database       urn:pulumi:dev::now-u::azure-native:dbforpostgresql:Database::causes-service-db
+azure-native:storage:BlobContainer          urn:pulumi:dev::now-u::azure-native:storage:BlobContainer::causes-service-static-storage
+pulumi:providers:docker                     urn:pulumi:dev::now-u::pulumi:providers:docker::default_4_3_0
+azure-native:app:ManagedEnvironment         urn:pulumi:dev::now-u::azure-native:app:ManagedEnvironment::env
+docker:index/image:Image                    urn:pulumi:dev::now-u::docker:index/image:Image::image
+pulumi:providers:cloudflare                 urn:pulumi:dev::now-u::pulumi:providers:cloudflare::default_5_6_0
+cloudflare:index/record:Record              urn:pulumi:dev::now-u::cloudflare:index/record:Record::causes-service-dns-verification-a
+cloudflare:index/record:Record              urn:pulumi:dev::now-u::cloudflare:index/record:Record::causes-service-dns-verification-txt
+azure-native:app:ContainerApp               urn:pulumi:dev::now-u::azure-native:app:ContainerApp::causes-service
+azure-native:app:ManagedCertificate         urn:pulumi:dev::now-u::azure-native:app:ManagedCertificate::causes-service-certificate
+
+
+Found no pending operations associated with JElgar/dev
+
+Backend        
+Name           pulumi.com
+URL            https://app.pulumi.com/JElgar
+User           JElgar
+Organizations  JElgar, now-u
+
+Dependencies:
+NAME                 VERSION
+pip                  23.2.1
+pulumi-azure-native  2.1.1
+pulumi-cloudflare    5.6.0
+pulumi-docker        4.3.0
+setuptools           68.0.0
+wheel                0.41.0
+
+Pulumi locates its logs in /tmp by default

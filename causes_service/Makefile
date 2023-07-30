@@ -1,0 +1,23 @@
+PONY: help
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+up:
+	./manage.py runserver 0.0.0.0:8000
+
+migrate:
+	./manage.py migrate
+
+migrations:
+	./manage.py makemigrations
+
+generateschema:
+	./manage.py generateschema --file openapi-schema.yml
+
+createsuperuser:
+	DJANGO_SUPERUSER_PASSWORD=admin ./manage.py createsuperuser --noinput --email admin@email.com
+
+populate_search_indexes:
+	./manage.py createMeilisearchIndex
+	./manage.py populateMeilisearchIndex

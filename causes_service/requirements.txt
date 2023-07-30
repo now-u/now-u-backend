@@ -1,0 +1,35 @@
+django==4.2.2
+djangorestframework==3.14.0
+Pillow==9.5.0
+grafana-django-saml2-auth==3.10.0
+mypy==1.4.1
+pyjwt==2.7.0
+# TODO This adds 200mb to the image!! Is there a better way?
+psycopg2-binary==2.9.6
+
+meilisearch==0.28.0
+mailchimp-marketing==3.0.80
+
+## Openapi generator (probably dev/build dep)
+pyyaml
+uritemplate
+drf-spectacular
+
+python-dotenv==1.0.0
+django-storages[azure]==1.13
+
+## Admin
+django-admin-interface==0.26.0
+
+## dev deps TODO move
+
+django-stubs[compatible-mypy]==4.2.2
+djangorestframework-stubs==3.14.2
+
+# TODO Remove once https://github.com/meilisearch/meilisearch-python/issues/789 resolved
+pydantic==1.10.10
+
+### Testing deps
+pytest==7.4.0
+pytest-django==4.5.2
+factory_boy==3.2.1
