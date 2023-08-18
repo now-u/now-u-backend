@@ -4,6 +4,8 @@ config:
     secure: AAABAFD54Rv/pJfA/5cLnz/nrTw2kKR+pgzBsIgKDC18Xb8Nw+T8Alwcvbwvzo8HNCvOyU7aFfxdgBAUO2tDl7W/02v39f+o
   cloudflare:zoneId:
     secure: AAABAF3H7LkCX+5GQ7lagB7m3Moz0JhLeD/NwYye3BvWJGhe0/s41bCzEvfCnIBRFdXDdBnyeU9ewFUAWa9jQw==
+  github:token:
+    secure: AAABAIWHWozdlcQuDLp9DVgBJx5DbF6ZnaWREhqGiLmc7BFHWGDldhp3JIhM/2+yPj87u/stGcE1zqiokHsDK9uhB+YZlj9yqqr/ClW9UcOzTTHCGANPAG0QRaPypjPgbCcCMXGMVY1w4nhDInizXtg5LgU2kEXDbjiWp5k=
   now-u-infra-base:authServiceJwtSecret:
     secure: AAABANaxiTfb4sKdEA0l9SaVCuMaNxRAepJovZ50GnJHLVca730KDHN7RrlUH+7OTxKUUbtx8EAwkFAn3aY9Umt+GFslXq1t+8wxs/4Dg/gu/LgIVCjkkMconHbSFzqmEiDbxIyohj96eB8M/ivAgcloIrek7JQA
   now-u-infra-base:containerPort: "5000"

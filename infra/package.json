@@ -1,16 +1,19 @@
 {
     "name": "now-u-backend",
-	"scripts": {
-		"deploy": "npx ts-node ./src/index.ts"
-	},
+    "scripts": {
+        "deploy": "npx ts-node ./src/index.ts"
+    },
     "devDependencies": {
-        "typescript": "4.9.3",
-        "@types/node": "^16"
+        "@types/node": "^16",
+        "typescript": "4.9.3"
     },
     "dependencies": {
         "@pulumi/azure-native": "^2.2.0",
         "@pulumi/cloudflare": "^5.7.0",
         "@pulumi/docker": "^4.3.1",
-        "@pulumi/pulumi": "^3.76.1"
+        "@pulumi/github": "^5.16.0",
+        "@pulumi/pulumi": "^3.76.1",
+        "cmd-ts": "^0.13.0",
+        "commander": "^11.0.0"
     }
 }

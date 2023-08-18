@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-base-infra:
+    name: Deploy base infra
+    uses: now-u/now-u-backend/.github/workflows/deploy-base-infra.yml@main
+
+  build-causes:
+    name: Build causes service
+    uses: now-u/now-u-backend/.github/workflows/build-causes.yml@main

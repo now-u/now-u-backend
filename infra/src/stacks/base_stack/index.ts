@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native"
+import * as github from "@pulumi/github";
 import { StackCreationOutput } from "../../utils/outputType";
 
 // TODO Move name to constants in infra package, so this can be fetched
@@ -160,6 +161,24 @@ export async function baseStackFunction() {
 			resourceGroupName,
 		})
 	});
+
+	new github.ActionsSecret("registryUrlGithubActionSecret", {
+		repository: "now-u/now-u-backend",
+		secretName: "REGISTRY_URL",
+		plaintextValue: registry.loginServer,
+	});
+	new github.ActionsSecret("registryUsernameGithubActionsSecret", {
+		repository: "now-u/now-u-backend",
+		secretName: "REGISTRY_USERNAME",
+		plaintextValue: registryCredentials.username!.apply(u => u!),
+	}); 
+	new github.ActionsSecret("registryPasswordGithubActionsSecret", {
+		// TODO Share this
+		repository: "now-u/now-u-backend",
+		secretName: "REGISTRY_PASSWORD ",
+		// TODO Share this
+		plaintextValue: registryCredentials.passwords!.apply(p => p![0]!.value!),
+	}); 
 
 	return {
 		resourceGroupName: resourceGroup.name,
