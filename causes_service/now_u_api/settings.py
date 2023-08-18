@@ -14,18 +14,21 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 
+load_dotenv()
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 BASE_URL = os.getenv('BASE_URL', 'http://192.168.1.11:8000')
 
-load_dotenv()
+print(f"{BASE_URL=}")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -35,9 +38,7 @@ SECRET_KEY = 'django-insecure-=2ni(vbte78nlvoip2+*pydk8(+z4ewov&8ns9+$6%5*b%dqhe
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = [
-    f'https://{BASE_URL}',
-]
+CSRF_TRUSTED_ORIGINS = [BASE_URL]
 
 
 # Application definition
@@ -47,6 +48,10 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'images.apps.ImagesConfig',
 
+    # Admin
+    'admin_interface',
+    'colorfield',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,18 +60,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'corsheaders',
     'drf_spectacular',
     'django_saml2_auth',
-
-    # Admin
-    'admin_interface',
-    'colorfield',
-
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -94,6 +96,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'now_u_api.wsgi.application'
 
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^http:\/\/localhost:*([0-9]+)?$",
+    r"^https://\w+\.now-u\.com$",
+]
+
 STATIC_FILES_STORAGE_CONTAINER = os.getenv("STATIC_FILES_STORAGE_CONTAINER", None)
 
 if STATIC_FILES_STORAGE_CONTAINER is not None:
@@ -101,7 +108,10 @@ if STATIC_FILES_STORAGE_CONTAINER is not None:
     STATIC_FILES_STORAGE_ACCOUNT_KEY = os.getenv("STATIC_FILES_STORAGE_ACCOUNT_KEY")
 
     STORAGES = {
-        "default": {"BACKEND": "storages.backends.azure_storage.AzureStorage"},
+        # TODO Maybe use non public container for this, set AZURE_CONTAINER
+        # TODO If not then remove custom backend and use the above vars 
+        # https://django-storages.readthedocs.io/en/latest/backends/azure.html#install
+        "default": {"BACKEND": "now_u_api.storage.PublicAzureStorage"},
         "staticfiles": {"BACKEND": "now_u_api.storage.PublicAzureStorage"},
     }
 
@@ -184,10 +194,40 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': True,
 }
 
+SAML2_AUTH_METADATA_FILE_PATH = os.getenv('SAML2_AUTH_METADATA_FILE_PATH', os.path.join(BASE_DIR, 'GoogleIDPMetadata.xml'))
+assert os.path.isfile(SAML2_AUTH_METADATA_FILE_PATH)
+
 SAML2_AUTH = {
     'DEBUG': True,
+    'LOGGING': {
+        'version': 1,
+        'formatters': {
+            'simple': {
+                'format': '[%(asctime)s] [%(levelname)s] [%(name)s.%(funcName)s] %(message)s',
+            },
+        },
+        'handlers': {
+            'stdout': {
+                'class': 'logging.StreamHandler',
+                # 'stream': 'ext://sys.stdout',
+                'level': 'DEBUG',
+                'formatter': 'simple',
+            },
+        },
+        'loggers': {
+            'saml2': {
+                'level': 'DEBUG'
+            },
+        },
+        'root': {
+            'level': 'DEBUG',
+            'handlers': [
+                'stdout',
+            ],
+        },
+    },
     # Metadata is required, choose either remote url or local file path
-    'METADATA_LOCAL_FILE_PATH': os.path.join(BASE_DIR,'GoogleIDPMetadata.xml'),
+    'METADATA_LOCAL_FILE_PATH': SAML2_AUTH_METADATA_FILE_PATH,
 
     # Optional settings below
     'DEFAULT_NEXT_URL': '/admin',  # Custom target redirect URL after the user get logged in. Default to /admin if not set. This setting will be overwritten if you have parameter ?next= specificed in the login URL.

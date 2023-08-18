@@ -9,7 +9,7 @@ WORKDIR /app
 COPY ./requirements.txt .
 
 RUN apt-get update -y && \
-    apt-get install -y netcat && \
+    apt-get install -y netcat xmlsec1 && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 

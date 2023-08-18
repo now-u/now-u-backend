@@ -1,0 +1,15 @@
+config:
+  azure-native:location: uksouth
+  cloudflare:apiToken:
+    secure: AAABAFD54Rv/pJfA/5cLnz/nrTw2kKR+pgzBsIgKDC18Xb8Nw+T8Alwcvbwvzo8HNCvOyU7aFfxdgBAUO2tDl7W/02v39f+o
+  cloudflare:zoneId:
+    secure: AAABAF3H7LkCX+5GQ7lagB7m3Moz0JhLeD/NwYye3BvWJGhe0/s41bCzEvfCnIBRFdXDdBnyeU9ewFUAWa9jQw==
+  now-u-infra-base:authServiceJwtSecret:
+    secure: AAABANaxiTfb4sKdEA0l9SaVCuMaNxRAepJovZ50GnJHLVca730KDHN7RrlUH+7OTxKUUbtx8EAwkFAn3aY9Umt+GFslXq1t+8wxs/4Dg/gu/LgIVCjkkMconHbSFzqmEiDbxIyohj96eB8M/ivAgcloIrek7JQA
+  now-u-infra-base:containerPort: "5000"
+  now-u-infra-base:cpu: "1"
+  now-u-infra-base:djangoAdminEmail:
+    secure: AAABAN3KTfYxTCrzvQnQOhWTGLnEUnNIgMzn1DG0d4gQElsxf86GDSt01L6uk24fzBvaxTv+nQNDZEBLOUw=
+  now-u-infra-base:djangoAdminPassword:
+    secure: AAABACE+Gd55zyU29CL1++eSbiDPmMttISePBbQmqPn/MalifBjGYylXGZ6lI2L/Df3C0RiV4BXzdPfHROr/pw==
+  now-u-infra-base:memory: "2"

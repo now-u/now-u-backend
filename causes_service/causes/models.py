@@ -66,6 +66,9 @@ class Cause(models.Model):
     learning_resources = models.ManyToManyField('LearningResource', related_name='causes', blank=True)
     campaigns = models.ManyToManyField('Campaign', related_name='causes', blank=True)
 
+    def header_image_preview(self):
+        return self.header_image.image_preview()
+
     def is_selected(self, user_id: str) -> bool:
         return UserCause.objects.filter(user_id=user_id, cause=self).exists()
 

@@ -1,6 +1,0 @@
-name: now-u
-runtime:
-  name: python
-  options:
-    virtualenv: venv
-description: Deployment for now-u services

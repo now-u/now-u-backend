@@ -23,6 +23,17 @@ class UserManager(BaseUserManager):
         """Create and save a regular User with the given email and password."""
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
+
+        first_name = extra_fields.pop('first_name', None)
+        last_name = extra_fields.pop('last_name', None)
+        if first_name and last_name:
+            extra_fields['name'] = f'{first_name} {last_name}'
+        elif first_name:
+            extra_fields['name'] = first_name
+
+        if extra_fields.get('auth_id', None) == "":
+            extra_fields['auth_id'] = None 
+
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
@@ -43,7 +54,7 @@ class User(AbstractUser):
     # TODO Remove username
     username = models.CharField(_('username'), max_length=254)
     email = models.EmailField(_('email address'), unique=True)
-    auth_id = models.CharField(_('auth_id'), max_length=254, unique=True)
+    auth_id = models.CharField(_('auth_id'), max_length=254, unique=True, null=True, blank=True)
     name = models.CharField(_("name"), max_length=150, blank=True)
 
     first_name = None
