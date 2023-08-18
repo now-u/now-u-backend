@@ -4,46 +4,48 @@ import * as cloudflare from "@pulumi/cloudflare";
 import * as docker from "@pulumi/docker";
 
 import { BindingType, ManagedCertificateDomainControlValidation } from "@pulumi/azure-native/app";
-import { BaseStackOutput } from "../stacks/base_stack";
+import { BaseStackReference } from "../stacks/base_stack";
+import { BASE_DOMAIN } from "../utils/constants";
 
 export type ApplicationArgs = {
 	env: pulumi.Input<pulumi.Input<azure.types.input.app.EnvironmentVarArgs>[]>,
 	containerPort: number,
-	customDomain: string,
+	domainPrefix: string,
 	imageName: string,
 	appPath: string,
-	baseStackOutput: BaseStackOutput, 
+
+	containerAppIdOutputValue: pulumi.Output<string>,
+	baseStackOutput: BaseStackReference,
 };
 
 export class Application extends pulumi.ComponentResource {
+	containerAppId: pulumi.Output<string>
+
 	constructor(name: string, args: ApplicationArgs, opts?: pulumi.ComponentResourceOptions) {
 		super("infra_shared_components:components:Application", name, {}, opts);
 
+		const config = new pulumi.Config()
+
 		const resourceGroupName = args.baseStackOutput.resourceGroupName;
 
-		const config = new pulumi.Config()
-		const currentStack = new pulumi.StackReference(
-			`JElgar/${pulumi.getProject()}/${pulumi.getStack()}`
-		)
-        const containerAppIdOutputName = `${args.customDomain}-container-app-id`
-
+		const domain = `${args.domainPrefix}.${BASE_DOMAIN}`
 		const txtRecord = new cloudflare.Record(
-			`${args.customDomain}-dns-verification-txt`,
+			`${args.domainPrefix}-dns-verification-txt`,
 			{
 				zoneId: config.requireSecret("cloudflareZoneId"),
-				name: `asuid.${args.customDomain}`,
-				value: args.baseStackOutput.containerAppEnvironmentCustomDomainVerificationId,
+				name: `asuid.${domain}`,
+				value: args.baseStackOutput.containerAppEnvironmentCustomDomainVerificationId.value,
 				type: "TXT",
 				ttl: 60,
 			}
 		)
 
 		const aRecord = new cloudflare.Record(
-			`${args.customDomain}-dns-verification-a`,
+			`${args.domainPrefix}-dns-verification-a`,
 			{
 				zoneId: config.requireSecret("cloudflareZoneId"),
-				name: args.customDomain,
-				value: args.baseStackOutput.containerAppEnvironmentStaticIp,
+				name: domain,
+				value: args.baseStackOutput.containerAppEnvironmentStaticIp.value,
 				type: "A",
 				ttl: 60,
 			}
@@ -52,20 +54,18 @@ export class Application extends pulumi.ComponentResource {
 		// There is no way to create a certifacte in one go. Instead we have to
 		// first create the without relying on the certifacte and then rerun
 		// pulumi to update the app to use the certifacte
-		const containerAppId = currentStack.getOutput(containerAppIdOutputName)
-
 		let certificate: azure.app.ManagedCertificate | undefined = undefined;
 		// TODO I assume this will never be none should we apply here
-		if (containerAppId !== undefined) {
+		if (args.containerAppIdOutputValue !== undefined) {
 			certificate = new azure.app.ManagedCertificate(
-				`${args.customDomain}-certificate`,
+				`${args.domainPrefix}-certificate`,
 				{
-					resourceGroupName: resourceGroupName,
-					environmentName: args.baseStackOutput.containerAppEnvironmentName,
-					managedCertificateName: `${args.customDomain}-certificate`,
+					resourceGroupName: resourceGroupName.value,
+					environmentName: args.baseStackOutput.containerAppEnvironmentName.value,
+					managedCertificateName: `${args.domainPrefix}-certificate`,
 					properties: {
 						domainControlValidation: ManagedCertificateDomainControlValidation.TXT,
-						subjectName: args.customDomain,
+						subjectName: domain,
 					}
 				},
 				{ dependsOn: [txtRecord, aRecord] },
@@ -73,7 +73,7 @@ export class Application extends pulumi.ComponentResource {
 		}
 
 		const dockerImage = new docker.Image(
-			`${args.customDomain}-image`,
+			`${args.domainPrefix}-image`,
 			{
 				imageName: args.imageName,
 				build: {
@@ -81,9 +81,9 @@ export class Application extends pulumi.ComponentResource {
 					platform: "linux/amd64",
 				},
 				registry: {
-					server: args.baseStackOutput.registryServer,
-					username: args.baseStackOutput.registryUsername,
-					password: args.baseStackOutput.registryPassword,
+					server: args.baseStackOutput.registryServer.value,
+					username: args.baseStackOutput.registryUsername.value,
+					password: args.baseStackOutput.registryPassword.value,
 				}
 			}
 		)
@@ -108,15 +108,15 @@ export class Application extends pulumi.ComponentResource {
 						},
 					]
 				},
-				environmentId: args.baseStackOutput.containerAppEnvironmentId,
-				resourceGroupName,
+				environmentId: args.baseStackOutput.containerAppEnvironmentId.value,
+				resourceGroupName: resourceGroupName.value,
 				configuration: {
 					ingress: {
 						external: true,
 						targetPort: args.containerPort,
 						customDomains: [
 							{
-								name: args.customDomain,
+								name: domain,
 								certificateId: certificate?.id,
 								bindingType: certificate !== undefined ? BindingType.SniEnabled : BindingType.Disabled,
 							}
@@ -124,9 +124,9 @@ export class Application extends pulumi.ComponentResource {
 					},
 					registries: [
 						{
-							server: args.baseStackOutput.registryServer,
-							username: args.baseStackOutput.registryUsername,
-							passwordSecretRef: args.baseStackOutput.registryPasswordSecretRef,
+							server: args.baseStackOutput.registryServer.value,
+							username: args.baseStackOutput.registryUsername.value,
+							passwordSecretRef: args.baseStackOutput.registryPasswordSecretRef.value,
 						},
 					]
 				},
@@ -134,9 +134,6 @@ export class Application extends pulumi.ComponentResource {
 			{ dependsOn: certificate !== undefined ? [certificate] : [] },
 		)
 
-		// TODO I assume this doesn't work
-		 this.registerOutputs({
-			 [containerAppIdOutputName]: containerApp.id
-		})
+		this.containerAppId = containerApp.id
 	}
 }

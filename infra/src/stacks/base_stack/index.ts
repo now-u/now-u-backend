@@ -1,9 +1,11 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native"
+import { StackCreationOutput } from "../../utils/outputType";
 
 // TODO Move name to constants in infra package, so this can be fetched
 
-export type BaseStackOutput = Awaited<ReturnType<typeof baseStackFunction>>
+// TODO Share type nonsense
+export type BaseStackReference = StackCreationOutput<Awaited<ReturnType<typeof baseStackFunction>>>
 
 export async function baseStackFunction() {
 	const resourceGroup = new azure.resources.ResourceGroup(

@@ -1,0 +1,13 @@
+config:
+  cloudflare:apiToken:
+    secure: AAABAN7Lb4IsU54zcEFLrUiPgI7PeD+MMe/WkhBamVolrazx0nbXjl3Yph+N4myi8zBImhrbRLAuXHbuIE9rF+acfWnSUcKq
+  cloudflare:zoneId:
+    secure: AAABAHQNR1V8Uh3+WHNdk9XvDxhaEWc7W4fTRyYw8cWpKPNShMQLMk0YHpHPaF57ML2+LhjIF7exuPFjUVIaMQ==
+  now-u-infra-causes:authServiceJwtSecret:
+    secure: AAABAHYTrr896FcRziaMHCvLts2j/NWiYooT0uUk0t95v60axnC19kQF4AqmpHs6pv3X83AYM81KwoVYxw+JpVSuPMA3rJtq0yb0GqeZ429UehWV9okTK96VqBL6cQWxiyYTOUr2rhs6xVJV3MA79DdItuoXZNP0
+  now-u-infra-causes:cloudflareZoneId:
+    secure: AAABABulWFxYY/cmvG5EKg6WuQlWHDxcX5I0ueMh8Am08vNxqS/Q/mC7Fg9KojTnDkMenNSSX2eDRxHBeIx4xw==
+  now-u-infra-causes:djangoAdminEmail:
+    secure: AAABAJ0G0y3Q4jAFWSLBUgDkPV7wwk6UecWcap4jOWhkPwycznuasIwkebwAxxHuC0eySThgmFsyU2EHlrA=
+  now-u-infra-causes:djangoAdminPassword:
+    secure: AAABACiq8B4V/beMarD3gTMiunPNo4koxxmz5DdVmvMvbEQTkXiHHQt1p4y3xb/8LIpC12lMQQ/n5byp71zKww==

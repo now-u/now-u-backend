@@ -1,19 +1,13 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as azure from "@pulumi/azure-native";
-import { jsonStringify } from "@pulumi/pulumi";
 
-import { Application, Registry, Database } from "../../components";
+import { Application, Database } from "../../components";
 
-import { baseStackFunction, BaseStackOutput } from '../base_stack';
+import { BaseStackReference } from '../base_stack';
+import { BASE_DOMAIN } from "../../utils/constants";
 
-// TODO Ignore this infra dir from docker
-
-export async function causesStackFunction(baseStackOutput: BaseStackOutput): Promise<Record<string, any>> {
+export async function causesStackFunction(baseStackOutput: BaseStackReference): Promise<Record<string, any>> {
 	const config = new pulumi.Config()
-	
-	const baseDomain = "dev.apiv2.now-u.com"
-	
-	const causesServiceDomain = `api.{base_domain}`
 	
 	const database = new Database(
 		"causes-service-database",
@@ -25,9 +19,9 @@ export async function causesStackFunction(baseStackOutput: BaseStackOutput): Pro
 	)
 	
 	const storageAccount = new azure.storage.StorageAccount(
-		"cs-static-files",
+		"csstatic",
 		{
-			resourceGroupName: baseStackOutput.resourceGroupName,
+			resourceGroupName: baseStackOutput.resourceGroupName.value,
 			kind: azure.storage.Kind.BlobStorage,
 			sku: {
 				name: azure.storage.SkuName.Standard_LRS,
@@ -37,30 +31,44 @@ export async function causesStackFunction(baseStackOutput: BaseStackOutput): Pro
 	)
 	
 	const storageAccountKey = pulumi.all(
-		[storageAccount.name, baseStackOutput.resourceGroupName]
+		[storageAccount.name, baseStackOutput.resourceGroupName.value]
 	).apply(([accountName, resourceGroupName]) =>
 		azure.storage.listStorageAccountKeys({
 			accountName,
 			resourceGroupName,
 		})
-	)
+	).apply(({keys}) => keys[0].value!)
 	
 	const staticFilesStorageContainer = new azure.storage.BlobContainer(
 		"cs-static-storage",
 		{
 			accountName: storageAccount.name,
-			resourceGroupName: baseStackOutput.resourceGroupName,
+			resourceGroupName: baseStackOutput.resourceGroupName.value,
 			publicAccess: azure.storage.PublicAccess.Container,
 		}
 	)
 	
+	const currentStack = new pulumi.StackReference(
+		`${pulumi.getOrganization()}/${pulumi.getProject()}/${pulumi.getStack()}`
+	)
+
+    const containerAppIdOutputName = "causes-container-app-id" as const
+	let containerAppIdOutputValue = currentStack.getOutput(containerAppIdOutputName) as pulumi.Output<string>
+
+	const domainPrefix = "causes"
 	const containerApp = new Application(
 		`causes-service-app`,
 		{
+			baseStackOutput,
+			domainPrefix,
+			containerPort: 5000,
+			imageName: "causes-service",
+			appPath: "../../../../causes_service",
 			env: [
 				{
 					name: "BASE_URL",
-					value: `https://${causesServiceDomain}`,
+					// TODO Shouldn't have to regenerate this
+					value: `https://${domainPrefix}.${BASE_DOMAIN}`,
 				},
 				{
 					name: "JWT_SECRET",
@@ -88,25 +96,14 @@ export async function causesStackFunction(baseStackOutput: BaseStackOutput): Pro
 				},
 				{
 					name: "DATABASE_HOST",
-					value: database.fully_qualified_domain_name
+					value: database.serverName,
 				},
 			],
-			containerPort: 5000,
-			template: {
-				scale: {
-					minReplicas: 1,
-				},
-				containers: [
-					{
-						name: "causes-service",
-						image: image.imageName,
-					}
-				]
-			}
+			containerAppIdOutputValue,
 		}
 	);
 
 	return {
-		containerAppId: containerApp.id,
+		[containerAppIdOutputName]: containerAppIdOutputValue,
 	}
 }
