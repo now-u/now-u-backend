@@ -4,7 +4,7 @@ import * as azure from "@pulumi/azure-native";
 import { Application, Database } from "../../components";
 
 import { BaseStackReference } from '../base_stack';
-import { BASE_DOMAIN } from "../../utils/constants";
+import { BASE_DOMAIN, CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME } from "../../utils/constants";
 
 export async function causesStackFunction(baseStackOutput: BaseStackReference): Promise<Record<string, any>> {
 	const config = new pulumi.Config()
@@ -56,14 +56,15 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 	let containerAppIdOutputValue = currentStack.getOutput(containerAppIdOutputName) as pulumi.Output<string>
 
 	const domainPrefix = "causes"
-	const containerApp = new Application(
+
+	new Application(
 		`causes-service-app`,
 		{
 			baseStackOutput,
 			domainPrefix,
 			containerPort: 5000,
-			imageName: "causes-service",
-			appPath: "../../../../causes_service",
+			imageName: "now-u-causes",
+			imageTag: config.require(CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME),
 			env: [
 				{
 					name: "BASE_URL",

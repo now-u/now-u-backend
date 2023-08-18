@@ -7,9 +7,20 @@ on:
 jobs:
   deploy-base-infra:
     name: Deploy base infra
-    uses: now-u/now-u-backend/.github/workflows/deploy-base-infra.yml@main
+    uses: now-u/now-u-backend/.github/workflows/deploy-base.yml@main
+    secrets: inherit
 
   build-causes:
     name: Build causes service
     needs: deploy-base-infra
     uses: now-u/now-u-backend/.github/workflows/build-causes.yml@main
+    secrets: inherit
+
+  deploy-causes:
+    name: Deploy base infra
+    needs: build-causes
+    uses: now-u/now-u-backend/.github/workflows/deploy-causes.yml@main
+    secrets: inherit
+    with:
+      causes-image-tag: ${{ needs.build-causes.outputs.causes-image-tag }}
+

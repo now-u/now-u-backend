@@ -12,7 +12,7 @@ export type ApplicationArgs = {
 	containerPort: number,
 	domainPrefix: string,
 	imageName: string,
-	appPath: string,
+	imageTag: string,
 
 	containerAppIdOutputValue: pulumi.Output<string>,
 	baseStackOutput: BaseStackReference,
@@ -72,21 +72,25 @@ export class Application extends pulumi.ComponentResource {
 			)
 		}
 
-		const dockerImage = new docker.Image(
-			`${args.domainPrefix}-image`,
-			{
-				imageName: args.imageName,
-				build: {
-					context: args.appPath,
-					platform: "linux/amd64",
-				},
-				registry: {
-					server: args.baseStackOutput.registryServer.value,
-					username: args.baseStackOutput.registryUsername.value,
-					password: args.baseStackOutput.registryPassword.value,
-				}
-			}
-		)
+		// TODO For now we are passing in the image tag for the image
+		// Not sure if thats the best way, if not we can go back to creating
+		// images like this:
+		//
+		// const dockerImage = new docker.Image(
+		// 	`${args.domainPrefix}-image`,
+		// 	{
+		// 		imageName: args.imageName,
+		// 		build: {
+		// 			context: args.appPath,
+		// 			platform: "linux/amd64",
+		// 		},
+		// 		registry: {
+		// 			server: args.baseStackOutput.registryServer.value,
+		// 			username: args.baseStackOutput.registryUsername.value,
+		// 			password: args.baseStackOutput.registryPassword.value,
+		// 		}
+		// 	}
+		// )
 
 		const containerApp = new azure.app.ContainerApp(
 			`${name}-container_app`,
@@ -98,7 +102,7 @@ export class Application extends pulumi.ComponentResource {
 					containers: [
 						{
 							name: args.imageName,
-							image: dockerImage.imageName,
+							image: args.imageTag,
 							// TODO Take as arg
 							resources: {
 								cpu: 1,

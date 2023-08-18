@@ -1,17 +1,26 @@
+encryptionsalt: v1:0KAgtxfWgfA=:v1:GM0ouXMhHZbQRyRG:Hnjm2ApSt/LMPVXxVFD6NUpRDuupjg==
 config:
+  azure-native:clientId: 1ee7d476-232f-4241-9558-ae4199712d31
+  azure-native:clientSecret:
+    secure: v1:MV7sy4x1CRm07Bgz:DmbZa4fQNjzUOGHcyAIMwxAfDzkywaMc2QvNRgzUGsDqofrbEdCkZpVQ8zHP53OeVoKJnWmK2qA=
   azure-native:location: uksouth
+  azure-native:subscriptionId: 1fb15a71-24b0-4e41-ae09-c019f19085ce
+  azure-native:tenantId: e83a0d0d-d016-4fad-ae67-12af4e1bb938
   cloudflare:apiToken:
-    secure: AAABAFD54Rv/pJfA/5cLnz/nrTw2kKR+pgzBsIgKDC18Xb8Nw+T8Alwcvbwvzo8HNCvOyU7aFfxdgBAUO2tDl7W/02v39f+o
+    secure: v1:POBWYSeLt58uL3rj:9LHsjkk098HVCOfIzaTnsgZOERnIRFOQeivX0q3/LiqTGe/PcZF8KLA9qPI6FUBnSTScCgamD0c=
   cloudflare:zoneId:
-    secure: AAABAF3H7LkCX+5GQ7lagB7m3Moz0JhLeD/NwYye3BvWJGhe0/s41bCzEvfCnIBRFdXDdBnyeU9ewFUAWa9jQw==
+    secure: v1:17Umo3FC3sKQt2WS:GvJd2Q8l6eQAHclFV1HO5R1T/+sd0a+aoj2oUAQQXytgw72sp9S9x6vJug0X4fo5
+  github:owner: now-u
   github:token:
-    secure: AAABAIWHWozdlcQuDLp9DVgBJx5DbF6ZnaWREhqGiLmc7BFHWGDldhp3JIhM/2+yPj87u/stGcE1zqiokHsDK9uhB+YZlj9yqqr/ClW9UcOzTTHCGANPAG0QRaPypjPgbCcCMXGMVY1w4nhDInizXtg5LgU2kEXDbjiWp5k=
+    secure: v1:MhbsRvBy9xeaUAPE:4aycAIm9xJ86Eg43dOzJ0l6j9IBNK2EiPLiP8QN2sK6OVPk7Im4rjkRHa0BvTRI9+JQKiLpGE872OXEqUyln1IWWBU9uF6tyUzlb4rn6Zr9ZlNf7nZfnM8mVnJK3hncpmLN7NgE1CTmRJ4ivhg==
   now-u-infra-base:authServiceJwtSecret:
-    secure: AAABANaxiTfb4sKdEA0l9SaVCuMaNxRAepJovZ50GnJHLVca730KDHN7RrlUH+7OTxKUUbtx8EAwkFAn3aY9Umt+GFslXq1t+8wxs/4Dg/gu/LgIVCjkkMconHbSFzqmEiDbxIyohj96eB8M/ivAgcloIrek7JQA
+    secure: v1:L8TchajRSh8HKPTV:OLXqL/o08qVmvCFGLVpXRsqt69WQhkMTYexqfNTqr9xSNcXkiR16P8d7bo3YEzbRQleeWxJaaqcLE+YeoFgCc63xNHbzLNKoDcmqeXQ2BPF+PeLsn3jnyXK7cnLDXBrYJFP3/8NDuho=
+  now-u-infra-base:cloudflareZoneId:
+    secure: v1:TKobmcR8LoLGnkTX:zJ05z+YTTKCORoQ2ysnx7YMp0pmszvj3yn4eIHdPCHuC5HEV2JY+OulsmFMtDgIL
   now-u-infra-base:containerPort: "5000"
   now-u-infra-base:cpu: "1"
   now-u-infra-base:djangoAdminEmail:
-    secure: AAABAN3KTfYxTCrzvQnQOhWTGLnEUnNIgMzn1DG0d4gQElsxf86GDSt01L6uk24fzBvaxTv+nQNDZEBLOUw=
+    secure: v1:3g4R8clt+61dG8JK:H5zEnLnNKOgxlqmN7H/oPtYogQD406BvskYMoHyXGiC3WWQaxlQRCDT5OTQawA==
   now-u-infra-base:djangoAdminPassword:
-    secure: AAABACE+Gd55zyU29CL1++eSbiDPmMttISePBbQmqPn/MalifBjGYylXGZ6lI2L/Df3C0RiV4BXzdPfHROr/pw==
+    secure: v1:sRDQ0yz1M4wkGube:7q6CBhpnvOY+ExubB6HSO2H5LpQvB1tCHf7H71jCWxOCAteuY3rsaVutmAKvgaPx
   now-u-infra-base:memory: "2"

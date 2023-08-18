@@ -163,22 +163,23 @@ export async function baseStackFunction() {
 	});
 
 	new github.ActionsSecret("registryUrlGithubActionSecret", {
-		repository: "now-u/now-u-backend",
+		repository: "now-u-backend",
 		secretName: "REGISTRY_URL",
 		plaintextValue: registry.loginServer,
 	});
 	new github.ActionsSecret("registryUsernameGithubActionsSecret", {
-		repository: "now-u/now-u-backend",
+		repository: "now-u-backend",
 		secretName: "REGISTRY_USERNAME",
-		plaintextValue: registryCredentials.username!.apply(u => u!),
+		plaintextValue: registryCredentials.apply(c => c.username!),
 	}); 
 	new github.ActionsSecret("registryPasswordGithubActionsSecret", {
 		// TODO Share this
-		repository: "now-u/now-u-backend",
-		secretName: "REGISTRY_PASSWORD ",
+		repository: "now-u-backend",
+		// TODO Open ticket to pulumi that if secret name is invalid, it explodes
+		secretName: "REGISTRY_PASSWORD",
 		// TODO Share this
-		plaintextValue: registryCredentials.passwords!.apply(p => p![0]!.value!),
-	}); 
+		plaintextValue: registryCredentials.apply(c => c.passwords![0].value!),
+	});
 
 	return {
 		resourceGroupName: resourceGroup.name,
@@ -186,9 +187,11 @@ export async function baseStackFunction() {
 		containerAppEnvironmentId: managedEnvironment.id,
 		containerAppEnvironmentName: managedEnvironment.name,
 		containerAppEnvironmentStaticIp: managedEnvironment.staticIp,
+		// TODO This must be a secret output
 		containerAppEnvironmentCustomDomainVerificationId: managedEnvironment.customDomainConfiguration.apply(output => output!.customDomainVerificationId!),
 		registryServer: registry.loginServer,
 		registryUsername: registryCredentials.username!.apply(u => u!),
+		// TODO This must be a secret output
 		registryPassword: registryCredentials.passwords!.apply(p => p![0].value!),
 		registryPasswordSecretRef: registryCredentials.passwords!.apply(p => p![0].name!),
 	}

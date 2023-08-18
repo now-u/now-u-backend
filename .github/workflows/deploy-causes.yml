@@ -1,0 +1,49 @@
+on:
+  workflow_call:
+    inputs:
+      causes-image-tag:
+        required: true
+        type: string
+
+jobs:
+  deploy-base-infra:
+    runs-on: ubuntu-latest
+    env:
+      PULUMI_CREDENTIALS_PATH: /home/runner/.pulumi
+      PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+      AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_ACCOUNT }}
+      AZURE_STORAGE_KEY: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_KEY }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Pulumi install
+        uses: pulumi/actions@v4
+        with:
+          work-dir: infra
+          stack-name: now-u-infra
+
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Pulumi login
+        run: pulumi login "azblob://pulumi-backend"
+
+      - name: Install dependencies
+        working-directory: infra
+        run: npm install
+
+      - name: Print causes
+        run: echo $CAUSES_IMAGE_TAG
+        env:
+          CAUSES_IMAGE_TAG: ${{ inputs.causes-image-tag }}
+
+      - name: Deploy causes service
+        working-directory: infra
+        run: npm run cli deploy -- --causes-image-tag ${{ inputs.causes-image-tag }}
