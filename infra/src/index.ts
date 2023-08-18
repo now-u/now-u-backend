@@ -57,8 +57,10 @@ const cmd = command({
   handler: async (args) => {
 	try {
 		await deploy(args.baseOnly)
+		process.exit(0)
 	} catch(err) {
 		console.error(err)
+		process.exit(1)
 	}
   },
 });

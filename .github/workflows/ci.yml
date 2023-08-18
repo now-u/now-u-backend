@@ -11,4 +11,5 @@ jobs:
 
   build-causes:
     name: Build causes service
+    needs: deploy-base-infra
     uses: now-u/now-u-backend/.github/workflows/build-causes.yml@main
