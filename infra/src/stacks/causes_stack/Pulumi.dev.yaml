@@ -1,13 +1,21 @@
+encryptionsalt: v1:45iwWEBMyGM=:v1:ztNyLmjb/OLLQLhd:aztKqML49He/NmqAz/i2fzXwa7ZkQA==
 config:
+  azure-native:clientId: 1ee7d476-232f-4241-9558-ae4199712d31
+  azure-native:clientSecret:
+    secure: v1:9wT7O4drxzhaHjU3:GcaIIBvcnrK8DC0Tyr/0HI4rPVBdQ3bc7t1TgXfbxMw8qBWa042ouwrPJFQtYGPU/LKMdyNlKfs=
+  azure-native:subscriptionId: 1fb15a71-24b0-4e41-ae09-c019f19085ce
+  azure-native:tenantId: e83a0d0d-d016-4fad-ae67-12af4e1bb938
   cloudflare:apiToken:
-    secure: AAABAN7Lb4IsU54zcEFLrUiPgI7PeD+MMe/WkhBamVolrazx0nbXjl3Yph+N4myi8zBImhrbRLAuXHbuIE9rF+acfWnSUcKq
-  cloudflare:zoneId:
-    secure: AAABAHQNR1V8Uh3+WHNdk9XvDxhaEWc7W4fTRyYw8cWpKPNShMQLMk0YHpHPaF57ML2+LhjIF7exuPFjUVIaMQ==
+    secure: v1:FzwiVR+1yOsq8J8s:FOY1pIDIU9EqONPA5rp14tOxODUXnKcVOQrX9k7mH0oKuvnrnEcg9iIHquwmiJFgKpz+T002sdY=
+  github:owner: now-u
+  github:token:
+    secure: v1:vnIf9z4UdB7BSm1J:QfiN4+R5jMbIS1SJGRf7xO6rmShB4yyq4bJH1dgPepaD9xnIw6FIcljQqrUXpjU2sATVEtF07sKWBdxbe/LVK98U0bc2fA5F029YEtzCiyUeFrXDVndtTUnBDwfSqVsoWSl9Nuhhe8xej/oVIg==
   now-u-infra-causes:authServiceJwtSecret:
-    secure: AAABAHYTrr896FcRziaMHCvLts2j/NWiYooT0uUk0t95v60axnC19kQF4AqmpHs6pv3X83AYM81KwoVYxw+JpVSuPMA3rJtq0yb0GqeZ429UehWV9okTK96VqBL6cQWxiyYTOUr2rhs6xVJV3MA79DdItuoXZNP0
+    secure: v1:YIIUFUAR3eD8aDpz:zGGcvostV/+XOiRhN6A2OqUu2SjCEhsPfTji0MxLxhgHtwSCaKIFgjJZEa6NixP2tEgJi2o6+xHWsZnU47CX8yZBGSP2KloJmvXUTag0EpAi+nq+nrwEFKaknwHQfAHVczZG//GLru8=
+  now-u-infra-causes:causesServiceImageTag: sha-ccd1568
   now-u-infra-causes:cloudflareZoneId:
-    secure: AAABABulWFxYY/cmvG5EKg6WuQlWHDxcX5I0ueMh8Am08vNxqS/Q/mC7Fg9KojTnDkMenNSSX2eDRxHBeIx4xw==
+    secure: v1:DpKeOcJcCDcE0G6r:GH2ugCOBXqzjjJWedxSKNODFQ6Z4JA16c+KcMPm8gH32tZdKNrYb54f6drxFNYk3
   now-u-infra-causes:djangoAdminEmail:
-    secure: AAABAJ0G0y3Q4jAFWSLBUgDkPV7wwk6UecWcap4jOWhkPwycznuasIwkebwAxxHuC0eySThgmFsyU2EHlrA=
+    secure: v1:LP9L8+rM4aypi7qm:DMhiGVOj5vpr97M9/NTGzNchbDHXm9oGbCqfdMcXrL1uAOVC1XLMxZ+DSWm7Dw==
   now-u-infra-causes:djangoAdminPassword:
-    secure: AAABACiq8B4V/beMarD3gTMiunPNo4koxxmz5DdVmvMvbEQTkXiHHQt1p4y3xb/8LIpC12lMQQ/n5byp71zKww==
+    secure: v1:NLU0Pr/pYqTQmohW:qE5fxA8ywtq7U+qyquGti32QDfU3vmzHrP1fxAIYce7eD/znS2J7GozPWjb/WiQR

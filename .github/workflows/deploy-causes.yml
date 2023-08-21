@@ -6,7 +6,7 @@ on:
         type: string
 
 jobs:
-  deploy-base-infra:
+  deploy-causes-infra:
     runs-on: ubuntu-latest
     env:
       PULUMI_CREDENTIALS_PATH: /home/runner/.pulumi
@@ -14,6 +14,7 @@ jobs:
       AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_ACCOUNT }}
       AZURE_STORAGE_KEY: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_KEY }}
     steps:
+      # TODO Move cli install and setup into shared initial step (and cache if possible)
       - uses: actions/checkout@v3
 
       - name: Setup node.js

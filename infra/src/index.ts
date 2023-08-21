@@ -1,5 +1,6 @@
+#!/usr/bin/env node
 import { InlineProgramArgs, LocalWorkspace } from "@pulumi/pulumi/automation";
-import { command, run, boolean, positional, string, flag, subcommands, optional } from 'cmd-ts';
+import { command, run, boolean, positional, string, flag, subcommands, optional, option } from 'cmd-ts';
 
 import path from "path";
 import { baseStackFunction, BaseStackReference } from './stacks/base_stack';
@@ -29,11 +30,12 @@ async function createCausesStack(baseStackOutputs: BaseStackReference, imageTag:
 
 	const causesStack = await LocalWorkspace.createOrSelectStack(causesStackArgs, { workDir: path.dirname(__dirname) + '/src/stacks/causes_stack'});
 
-	causesStack.setConfig(CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME, { value: imageTag, secret: false });
+	await causesStack.setConfig(CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME, { value: imageTag, secret: false });
 
-	causesStack.workspace.installPlugin("azure-native", "2.3.0");
-	causesStack.workspace.installPlugin("cloudflare", "5.8.0");
-	causesStack.workspace.installPlugin("docker", "4.3.1");
+	await causesStack.workspace.installPlugin("azure-native", "2.3.0");
+	await causesStack.workspace.installPlugin("cloudflare", "5.8.0");
+	await causesStack.workspace.installPlugin("docker", "4.3.1");
+	await causesStack.workspace.installPlugin("github", "5.16.0");
 
 	return causesStack
 }
@@ -96,9 +98,10 @@ const deployCommand = command({
   description: 'Deploy all infra',
   version: '0.0.1',
   args: {
-	  [CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME]: positional({
+	  [CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME]: option({
 		type: string,
-		displayName: 'causes-image-tag',
+		long: 'causes-image-tag',
+		short: 'c',
 		description: 'Tag of the causes service docker image from the registry',
 	  }),
   },

@@ -1,8 +1,12 @@
 {
     "name": "now-u-backend",
     "scripts": {
-        "cli": "npx ts-node ./src/index.ts"
+        "run": "npx ts-node ./src/index.ts",
+        "build": "tsc "
     },
+	"bin": {
+		"infra-cli": "./dist/index.js"
+	},
     "devDependencies": {
         "@types/node": "^16",
         "typescript": "4.9.3"

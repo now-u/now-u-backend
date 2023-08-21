@@ -1,0 +1,53 @@
+name: 'Setup infra cli'
+description: 'Setup now-u infra cli to deploy now-u infra'
+
+inputs:
+  azure-credentials:
+    description: 'Azure credentials secret'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        cache-dependency-path: infra/package-lock.json
+
+    - name: Pulumi install
+      uses: pulumi/actions@v4
+      with:
+        work-dir: infra
+        stack-name: now-u-infra
+
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ inputs.azure-credentials }}
+
+    - name: Pulumi login
+      shell: bash
+      run: pulumi login "azblob://pulumi-backend"
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: infra
+      run: npm install
+
+    - name: Build cli
+      shell: bash
+      working-directory: infra
+      run: npm run build
+
+    - name: Install cli
+      shell: bash
+      working-directory: infra
+      run: npm install -g .
+
+    - name: Test cli accessible
+      shell: bash
+      working-directory: infra
+      run: command -v infra-cli
+

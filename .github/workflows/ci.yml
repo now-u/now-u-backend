@@ -4,23 +4,53 @@ on:
   push:
     branches: [ main ]
 
+env:
+  PULUMI_CREDENTIALS_PATH: /home/runner/.pulumi
+  PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+  AZURE_STORAGE_ACCOUNT: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_ACCOUNT }}
+  AZURE_STORAGE_KEY: ${{ secrets.PULUMI_BACKEND_AZURE_STORAGE_KEY }}
+
 jobs:
-  deploy-base-infra:
-    name: Deploy base infra
-    uses: now-u/now-u-backend/.github/workflows/deploy-base.yml@main
-    secrets: inherit
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-  build-causes:
-    name: Build causes service
-    needs: deploy-base-infra
-    uses: now-u/now-u-backend/.github/workflows/build-causes.yml@main
-    secrets: inherit
+      - name: Setup infra cli
+        uses: ./.github/actions/setup-infra-cli
+        with:
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-  deploy-causes:
-    name: Deploy base infra
-    needs: build-causes
-    uses: now-u/now-u-backend/.github/workflows/deploy-causes.yml@main
-    secrets: inherit
-    with:
-      causes-image-tag: ${{ needs.build-causes.outputs.causes-image-tag }}
+      - name: Deploy base infra
+        run: infra-cli bootstrap
+
+      - name: Build and publish causes image
+        id: build-causes
+        uses: ./.github/actions/build-causes
+        with:
+          registry-url: ${{ secrets.REGISTRY_URL }}
+          registry-username: ${{ secrets.REGISTRY_USERNAME }}
+          registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Deploy causes infra
+        run: infra-cli deploy --causes-image-tag ${{ steps.build-causes.outputs.causes-image-tag }}
+
+  # deploy-base-infra:
+  #   name: Deploy base infra
+  #   uses: now-u/now-u-backend/.github/workflows/deploy-base.yml@main
+  #   secrets: inherit
+
+  # build-causes:
+  #   name: Build causes service
+  #   needs: deploy-base-infra
+  #   uses: now-u/now-u-backend/.github/workflows/build-causes.yml@main
+  #   secrets: inherit
+
+  # deploy-causes:
+  #   name: Deploy base infra
+  #   needs: build-causes
+  #   uses: now-u/now-u-backend/.github/workflows/deploy-causes.yml@main
+  #   secrets: inherit
+  #   with:
+  #     causes-image-tag: ${{ needs.build-causes.outputs.causes-image-tag }}
 

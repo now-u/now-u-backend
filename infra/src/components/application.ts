@@ -32,6 +32,7 @@ export class Application extends pulumi.ComponentResource {
 		const txtRecord = new cloudflare.Record(
 			`${args.domainPrefix}-dns-verification-txt`,
 			{
+				// TODO Can we use cloudlfare:zoneId?
 				zoneId: config.requireSecret("cloudflareZoneId"),
 				name: `asuid.${domain}`,
 				value: args.baseStackOutput.containerAppEnvironmentCustomDomainVerificationId.value,
@@ -53,24 +54,83 @@ export class Application extends pulumi.ComponentResource {
 
 		// There is no way to create a certifacte in one go. Instead we have to
 		// first create the without relying on the certifacte and then rerun
-		// pulumi to update the app to use the certifacte
-		let certificate: azure.app.ManagedCertificate | undefined = undefined;
 		// TODO I assume this will never be none should we apply here
-		if (args.containerAppIdOutputValue !== undefined) {
-			certificate = new azure.app.ManagedCertificate(
-				`${args.domainPrefix}-certificate`,
+		this.containerAppId = args.containerAppIdOutputValue.apply(id => {
+			// pulumi to update the app to use the certifacte
+			let certificate: azure.app.ManagedCertificate | undefined = undefined;
+			if (id !== undefined) {
+				certificate = new azure.app.ManagedCertificate(
+					`${args.domainPrefix}-certificate`,
+					{
+						resourceGroupName: resourceGroupName.value,
+						environmentName: args.baseStackOutput.containerAppEnvironmentName.value,
+						managedCertificateName: `${args.domainPrefix}-certificate`,
+						properties: {
+							domainControlValidation: ManagedCertificateDomainControlValidation.TXT,
+							subjectName: domain,
+						}
+					},
+					{ dependsOn: [txtRecord, aRecord] },
+				)
+			}
+
+			const containerApp = new azure.app.ContainerApp(
+				`${name}-app`,
 				{
+					template: {
+						scale: {
+							minReplicas: 1,
+						},
+						containers: [
+							{
+								name: args.imageName,
+								image: args.imageTag,
+								// TODO Take as arg
+								resources: {
+									cpu: 1,
+									memory: "2Gi",
+								},
+								env: args.env,
+							},
+						]
+					},
+					environmentId: args.baseStackOutput.containerAppEnvironmentId.value,
 					resourceGroupName: resourceGroupName.value,
-					environmentName: args.baseStackOutput.containerAppEnvironmentName.value,
-					managedCertificateName: `${args.domainPrefix}-certificate`,
-					properties: {
-						domainControlValidation: ManagedCertificateDomainControlValidation.TXT,
-						subjectName: domain,
-					}
+					configuration: {
+						ingress: {
+							external: true,
+							targetPort: args.containerPort,
+							customDomains: [
+								{
+									name: domain,
+									certificateId: certificate?.id,
+									bindingType: certificate !== undefined ? BindingType.SniEnabled : BindingType.Disabled,
+								}
+							]
+						},
+						secrets: [
+							{
+								// TODO COnstant
+								name: "registry-password",
+								// TODO Remove seret ref
+								value: args.baseStackOutput.registryPassword.value,
+
+							}
+						],
+						registries: [
+							{
+								server: args.baseStackOutput.registryServer.value,
+								username: args.baseStackOutput.registryUsername.value,
+								passwordSecretRef: "registry-password",
+							},
+						]
+					},
 				},
-				{ dependsOn: [txtRecord, aRecord] },
+				{ dependsOn: certificate !== undefined ? [certificate] : [] },
 			)
-		}
+
+			return containerApp.id
+		})
 
 		// TODO For now we are passing in the image tag for the image
 		// Not sure if thats the best way, if not we can go back to creating
@@ -91,53 +151,5 @@ export class Application extends pulumi.ComponentResource {
 		// 		}
 		// 	}
 		// )
-
-		const containerApp = new azure.app.ContainerApp(
-			`${name}-container_app`,
-			{
-				template: {
-					scale: {
-						minReplicas: 1,
-					},
-					containers: [
-						{
-							name: args.imageName,
-							image: args.imageTag,
-							// TODO Take as arg
-							resources: {
-								cpu: 1,
-								memory: "2Gi",
-							},
-							env: args.env,
-						},
-					]
-				},
-				environmentId: args.baseStackOutput.containerAppEnvironmentId.value,
-				resourceGroupName: resourceGroupName.value,
-				configuration: {
-					ingress: {
-						external: true,
-						targetPort: args.containerPort,
-						customDomains: [
-							{
-								name: domain,
-								certificateId: certificate?.id,
-								bindingType: certificate !== undefined ? BindingType.SniEnabled : BindingType.Disabled,
-							}
-						]
-					},
-					registries: [
-						{
-							server: args.baseStackOutput.registryServer.value,
-							username: args.baseStackOutput.registryUsername.value,
-							passwordSecretRef: args.baseStackOutput.registryPasswordSecretRef.value,
-						},
-					]
-				},
-			},
-			{ dependsOn: certificate !== undefined ? [certificate] : [] },
-		)
-
-		this.containerAppId = containerApp.id
 	}
 }

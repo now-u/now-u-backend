@@ -193,6 +193,7 @@ export async function baseStackFunction() {
 		registryUsername: registryCredentials.username!.apply(u => u!),
 		// TODO This must be a secret output
 		registryPassword: registryCredentials.passwords!.apply(p => p![0].value!),
+		// TODO This is not a secret ref
 		registryPasswordSecretRef: registryCredentials.passwords!.apply(p => p![0].name!),
 	}
 }
