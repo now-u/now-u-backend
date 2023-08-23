@@ -103,6 +103,14 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 					name: "DATABASE_HOST",
 					value: database.serverFullyQualifiedDomainName,
 				},
+				{
+					name: "DJANGO_SUPERUSER_EMAIL",
+                    value: config.requireSecret("djangoAdminEmail"),
+				},
+				{
+					name: "DJANGO_SUPERUSER_PASSWORD",
+                    value: config.requireSecret("djangoAdminPassword"),
+				},
 			],
 			containerAppIdOutputValue,
 		}
