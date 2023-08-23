@@ -8,7 +8,8 @@ export type DatabaseArgs = {
 }
 
 export class Database extends pulumi.ComponentResource {
-	serverName: pulumi.Output<string>
+	serverFullyQualifiedDomainName: pulumi.Output<string>
+	name: pulumi.Output<string>
 
 	constructor(name: string, args: DatabaseArgs, opts?: pulumi.ComponentResourceOptions) {
 		super("infra_shared_components:components:Database", name, {}, opts);
@@ -17,7 +18,7 @@ export class Database extends pulumi.ComponentResource {
 		console.log(typeof args.baseStackOutput.resourceGroupName)
 		console.log(args.baseStackOutput.resourceGroupName)
 
-		new azure.dbforpostgresql.Database(
+		const database = new azure.dbforpostgresql.Database(
 			`${name}-db`,
 			{
 				databaseName: args.databaseName,
@@ -26,7 +27,8 @@ export class Database extends pulumi.ComponentResource {
 			}
 		)
 
-		this.serverName = args.baseStackOutput.postgresServerName.value
+		this.serverFullyQualifiedDomainName = args.baseStackOutput.postgresServerFullyQualifiedDomainName.value
 		this.registerOutputs({});
+		this.name = database.name
 	}
 }

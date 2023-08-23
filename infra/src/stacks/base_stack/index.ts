@@ -46,7 +46,7 @@ export async function baseStackFunction() {
 		"nowu-infra-db-network-dns-zone",
 		{
 			// TODO Can this be lowercase
-			location: "global",
+			location: "Global",
 			resourceGroupName: resourceGroup.name,
 			privateZoneName: "nowu.postgres.database.azure.com"
 		}
@@ -184,6 +184,7 @@ export async function baseStackFunction() {
 	return {
 		resourceGroupName: resourceGroup.name,
 		postgresServerName: postgresServer.name,
+		postgresServerFullyQualifiedDomainName: postgresServer.fullyQualifiedDomainName,
 		containerAppEnvironmentId: managedEnvironment.id,
 		containerAppEnvironmentName: managedEnvironment.name,
 		containerAppEnvironmentStaticIp: managedEnvironment.staticIp,

@@ -89,6 +89,10 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 				},
 				{
 					name: "DATABASE_NAME",
+					value: database.name,
+				},
+				{
+					name: "DATABASE_USER",
 					value: "superduperadmin",
 				},
 				{
@@ -97,7 +101,7 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 				},
 				{
 					name: "DATABASE_HOST",
-					value: database.serverName,
+					value: database.serverFullyQualifiedDomainName,
 				},
 			],
 			containerAppIdOutputValue,
