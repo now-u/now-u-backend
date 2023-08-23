@@ -66,7 +66,7 @@ export class Application extends pulumi.ComponentResource {
 						environmentName: args.baseStackOutput.containerAppEnvironmentName.value,
 						managedCertificateName: `${args.domainPrefix}-certificate`,
 						properties: {
-							domainControlValidation: ManagedCertificateDomainControlValidation.TXT,
+							domainControlValidation: ManagedCertificateDomainControlValidation.HTTP,
 							subjectName: domain,
 						}
 					},
@@ -126,7 +126,7 @@ export class Application extends pulumi.ComponentResource {
 						]
 					},
 				},
-				{ dependsOn: certificate !== undefined ? [certificate] : [] },
+				{ dependsOn: certificate !== undefined ? [certificate] : [txtRecord, aRecord] },
 			)
 
 			return containerApp.id

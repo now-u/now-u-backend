@@ -1,6 +1,6 @@
 media/
 staticfiles/
-GoogleIDPMetadata.xml
+# GoogleIDPMetadata.xml
 # Ignoring for now as has huge amount of data, can add back later
 fixtures/
 

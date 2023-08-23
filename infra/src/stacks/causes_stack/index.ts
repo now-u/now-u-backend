@@ -52,12 +52,12 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 		`${pulumi.getOrganization()}/${pulumi.getProject()}/${pulumi.getStack()}`
 	)
 
-    const containerAppIdOutputName = "causes-container-app-id" as const
-	let containerAppIdOutputValue = currentStack.getOutput(containerAppIdOutputName) as pulumi.Output<string>
+    const containerAppIdOutputName = "causes-container-app-id" as const;
+	const containerAppIdOutputValue = currentStack.getOutput(containerAppIdOutputName) as pulumi.Output<string>;
 
 	const domainPrefix = "causes"
 
-	new Application(
+	const app = new Application(
 		`causes-service-app`,
 		{
 			baseStackOutput,
@@ -105,6 +105,6 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 	);
 
 	return {
-		[containerAppIdOutputName]: containerAppIdOutputValue,
+		[containerAppIdOutputName]: app.containerAppId,
 	}
 }
