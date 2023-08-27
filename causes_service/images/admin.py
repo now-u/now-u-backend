@@ -11,7 +11,7 @@ from django.contrib import admin
 
 
 class AdminImageWidget(AdminFileWidget):
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, **kwargs):
         output = []
         if value and getattr(value, "url", None):
             image_url = value.url

@@ -5,7 +5,7 @@ from now_u_api.settings import JWT_SECRET
 from users.models import User
 
 class NowuTokenAuthentication(TokenAuthentication): 
-    keyword = 'JWT' # token type
+    keyword = 'Bearer' # token type
 
     def authenticate_credentials(self, key):
         try:

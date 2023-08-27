@@ -16,6 +16,14 @@ import os
 
 load_dotenv()
 
+
+def get_required_env(name: str) -> str:
+    value = os.getenv(name)
+    if value is None:
+        raise Exception(f"{name} is not set")
+    return value
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -47,6 +55,7 @@ INSTALLED_APPS = [
     'causes.apps.CausesConfig',
     'users.apps.UsersConfig',
     'images.apps.ImagesConfig',
+    'faqs.apps.FaqConfig',
 
     # Admin
     'admin_interface',
@@ -101,11 +110,11 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.now-u\.com$",
 ]
 
-STATIC_FILES_STORAGE_CONTAINER = os.getenv("STATIC_FILES_STORAGE_CONTAINER", None)
+STATIC_FILES_STORAGE_CONTAINER = os.getenv("STATIC_FILES_STORAGE_CONTAINER")
 
 if STATIC_FILES_STORAGE_CONTAINER is not None:
-    STATIC_FILES_STORAGE_ACCOUNT_NAME = os.getenv("STATIC_FILES_STORAGE_ACCOUNT_NAME")
-    STATIC_FILES_STORAGE_ACCOUNT_KEY = os.getenv("STATIC_FILES_STORAGE_ACCOUNT_KEY")
+    STATIC_FILES_STORAGE_ACCOUNT_NAME = get_required_env("STATIC_FILES_STORAGE_ACCOUNT_NAME")
+    STATIC_FILES_STORAGE_ACCOUNT_KEY = get_required_env("STATIC_FILES_STORAGE_ACCOUNT_KEY")
 
     STORAGES = {
         # TODO Maybe use non public container for this, set AZURE_CONTAINER
@@ -127,11 +136,11 @@ if STATIC_FILES_STORAGE_CONTAINER is not None:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
+        'NAME': get_required_env('DATABASE_NAME'),
+        'USER': get_required_env('DATABASE_USER'),
+        'PASSWORD': get_required_env('DATABASE_PASSWORD'),
+        'HOST': get_required_env('DATABASE_HOST'),
+        'PORT': get_required_env('DATABASE_PORT'),
     }
 }
 
@@ -266,10 +275,10 @@ SAML2_AUTH = {
 }
 
 # TODO Assert not none and secret if is
-JWT_SECRET = os.getenv('JWT_SECRET')
+JWT_SECRET = get_required_env('JWT_SECRET')
 
 MAILCHIMP = {
-    'API_KEY': os.getenv('MAILCHIMP_API_KEY'),
-    'LIST_ID': os.getenv('MAILCHIMP_LIST_ID'),
-    'SERVER': os.getenv('MAILCHIMP_SERVER'),
+    'API_KEY': get_required_env('MAILCHIMP_API_KEY'),
+    'LIST_ID': get_required_env('MAILCHIMP_LIST_ID'),
+    'SERVER': get_required_env('MAILCHIMP_SERVER'),
 }

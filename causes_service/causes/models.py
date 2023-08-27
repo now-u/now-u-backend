@@ -254,5 +254,5 @@ class UserCampaign(TimestampMixin, models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
 class UserCause(TimestampMixin, models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='selected_causes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)

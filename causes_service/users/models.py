@@ -56,6 +56,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     auth_id = models.CharField(_('auth_id'), max_length=254, unique=True, null=True, blank=True)
     name = models.CharField(_("name"), max_length=150, blank=True)
+    selected_causes = models.ManyToManyField('causes.Cause', through='causes.UserCause')
 
     first_name = None
     last_name = None

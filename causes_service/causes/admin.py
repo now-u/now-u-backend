@@ -101,8 +101,12 @@ class OrganisationExtraLinkInline(admin.TabularInline):
     extra = 0
 
 class OrganisationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id')
+    list_display = ('name', 'id', 'active')
     inlines = [OrganisationExtraLinkInline]
+
+    def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
+        raw_fieldsets = super().get_fieldsets(request, obj)
+        return split_release_info(raw_fieldsets)
 
 # Register your models here.
 admin.site.register(Cause, CauseAdmin)

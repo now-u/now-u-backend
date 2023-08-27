@@ -16,6 +16,7 @@ Including another URLconf
 """
 from causes import views as causeViews
 from users import views as userViews
+from faqs import views as faqViews
 import django_saml2_auth.views
 from now_u_api import settings
 
@@ -32,12 +33,13 @@ router.register(r'learning_resources', causeViews.LearningResourceViewSet)
 router.register(r'campaigns', causeViews.CampaignViewSet)
 router.register(r'organisations', causeViews.OrganisationViewSet)
 router.register(r'new_articles', causeViews.NewsArticleViewSet)
+router.register(r'faqs', faqViews.FaqViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path(r'me/profile', userViews.UserProfileView.as_view()),
-    path(r'me/causesInfo', userViews.CausesUserView.as_view()),
+    path(r'me/profile/', userViews.UserProfileView.as_view()),
+    path(r'me/causesInfo/', userViews.CausesUserView.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

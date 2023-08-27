@@ -2,16 +2,22 @@ import factory
 import factory.fuzzy
 
 from causes.models import Cause, Action
+from images.models import Image
+
+class ImageFactory(factory.django.DjangoModelFactory):
+    image = factory.Faker("image_url")
+
+    class Meta:
+        model = Image
 
 class CauseFactory(factory.django.DjangoModelFactory):
-
-    class Meta: 
+    class Meta:
         model = Cause
 
-    title = factory.Faker("sentence") 
-    icon = factory.fuzzy.FuzzyChoice(Cause.Icon.choices)
+    title = factory.Faker("sentence")
+    icon = factory.fuzzy.FuzzyChoice(Cause.Icon.values)
     description = factory.Faker("sentence")
-    header_image = factory.Faker("image_url")
+    header_image = factory.SubFactory(ImageFactory)
 
 class ActionFactory(factory.django.DjangoModelFactory):
     title = factory.Faker("sentence")
