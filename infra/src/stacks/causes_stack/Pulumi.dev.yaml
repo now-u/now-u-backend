@@ -19,3 +19,7 @@ config:
     secure: v1:LP9L8+rM4aypi7qm:DMhiGVOj5vpr97M9/NTGzNchbDHXm9oGbCqfdMcXrL1uAOVC1XLMxZ+DSWm7Dw==
   now-u-infra-causes:djangoAdminPassword:
     secure: v1:NLU0Pr/pYqTQmohW:qE5fxA8ywtq7U+qyquGti32QDfU3vmzHrP1fxAIYce7eD/znS2J7GozPWjb/WiQR
+  now-u-infra-causes:mailchimpApiKey:
+    secure: v1:uxtei1X1oe4CSw9G:5ipWVe6rDrIj2DGjIKXq/umcI43I4g8dVyPoPtCN/r7r0Au+WbK0HUA57zByhKJ3a7EMIw==
+  now-u-infra-causes:mailchimpListId: b604a851dc
+  now-u-infra-causes:mailchimpServer: us4

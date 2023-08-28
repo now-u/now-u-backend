@@ -105,12 +105,29 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 					value: database.serverFullyQualifiedDomainName,
 				},
 				{
+					name: "DATABASE_PORT",
+					value: "5432",
+				},
+				{
 					name: "DJANGO_SUPERUSER_EMAIL",
                     value: config.requireSecret("djangoAdminEmail"),
 				},
 				{
 					name: "DJANGO_SUPERUSER_PASSWORD",
                     value: config.requireSecret("djangoAdminPassword"),
+				},
+				{
+					name: "MAILCHIMP_API_KEY",
+                    value: config.requireSecret("mailchimpApiKey"),
+				},
+				{
+					name: "MAILCHIMP_LIST_ID",
+                    value: config.requireSecret("mailchimpListId"),
+				},
+				// TODO Set these config things
+				{
+					name: "MAILCHIMP_SERVER",
+                    value: config.require("mailchimpServer"),
 				},
 			],
 			containerAppIdOutputValue,
