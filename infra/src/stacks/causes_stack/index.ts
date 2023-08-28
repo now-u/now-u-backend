@@ -5,6 +5,7 @@ import { Application, Database } from "../../components";
 
 import { BaseStackReference } from '../base_stack';
 import { BASE_DOMAIN, CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME } from "../../utils/constants";
+import { JitRequest } from "@pulumi/azure-native/solutions/jitRequest";
 
 export async function causesStackFunction(baseStackOutput: BaseStackReference): Promise<Record<string, any>> {
 	const config = new pulumi.Config()
@@ -133,6 +134,30 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 			containerAppIdOutputValue,
 		}
 	);
+
+	// TODO Create shared component for this so you only have to give name of resource
+	// Will hvae to generate base64 content and replace registry name in there
+	new azure.containerregistry.Task('purge-cs-containers-task', {
+		registryName: baseStackOutput.registryName.value,
+		resourceGroupName: baseStackOutput.resourceGroupName.value,
+		status: 'Enabled',
+		step: {
+			type: 'EncodedTask',
+			encodedTaskContent: 'dmVyc2lvbjogdjEuMS4wCnN0ZXBzOiAKICAtIGNtZDogYWNyIHB1cmdlIC0tZmlsdGVyICdub3ctdS1jYXVzZXM6LionICAtLWFnbyA3ZCAtLWtlZXAgNQogICAgZGlzYWJsZVdvcmtpbmdEaXJlY3RvcnlPdmVycmlkZTogdHJ1ZQogICAgdGltZW91dDogMzYwMAo='
+		},
+		trigger: {
+			timerTriggers: [
+				{
+					name: 'Daily cs purge',
+					schedule: '0 0 * * *',
+				}
+			]
+		},
+		platform: {
+			architecture: 'amd64',
+			os: 'Linux',
+		}
+	});
 
 	return {
 		[containerAppIdOutputName]: app.containerAppId,

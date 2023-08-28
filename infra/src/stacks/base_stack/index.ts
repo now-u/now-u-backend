@@ -124,7 +124,7 @@ export async function baseStackFunction() {
 			dependsOn: [networkLink],
 		}
 	)
-	
+
 	const registry = new azure.containerregistry.Registry(
 		"nowu-infra-registry",
 		{
@@ -191,6 +191,7 @@ export async function baseStackFunction() {
 		// TODO This must be a secret output
 		containerAppEnvironmentCustomDomainVerificationId: managedEnvironment.customDomainConfiguration.apply(output => output!.customDomainVerificationId!),
 		registryServer: registry.loginServer,
+		registryName: registry.name,
 		registryUsername: registryCredentials.username!.apply(u => u!),
 		// TODO This must be a secret output
 		registryPassword: registryCredentials.passwords!.apply(p => p![0].value!),
