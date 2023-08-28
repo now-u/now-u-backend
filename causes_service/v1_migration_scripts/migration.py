@@ -3,6 +3,36 @@ import json
 import shutil
 from datetime import datetime
 
+def get_duplicate_actions(actions):
+    print(set(action['type'] for action in actions))
+
+    titles: dict[str, int] = {}
+    # X is a duplicate of Y
+    duplicate_titles_ids: dict[int, int] = {}
+    for action in actions:
+        if action['title'] in titles:
+            duplicate_titles_ids[action['id']] = titles[action['title']]
+        else:
+            titles[action['title']] = action['id']
+
+    print(duplicate_titles_ids)
+    return duplicate_titles_ids
+
+def get_duplicate_learning_resources(learning_resources):
+    print(set(resource['type'] for resource in learning_resources))
+
+    titles: dict[str, int] = {}
+    # X is a duplicate of Y
+    duplicate_titles_ids: dict[int, int] = {}
+    for resource in learning_resources:
+        if resource['title'] in titles:
+            duplicate_titles_ids[resource['id']] = titles[resource['title']]
+        else:
+            titles[resource['title']] = resource['id']
+
+    print(duplicate_titles_ids)
+    return duplicate_titles_ids
+
 def organisation_type(organisation_type: str) -> str:
     match organisation_type:
         case "social enterprise" | "social_enterprise":
@@ -65,10 +95,6 @@ def action_type(action_type: str) -> str:
             # raise Exception(f"Unknown action type {action_type}")
 
 
-duplicate_action_ids = { 770: 746, 322: 761, 411: 762, 421: 154, 481: 100, 577: 764, 586: 765 }
-duplicate_learning_resource_ids = {1061: 604, 1062: 620, 397: 390, 497: 496, 660: 632, 802: 801, 1035: 544, 976: 150, 144: 973, 145: 974, 146: 961, 148: 975, 830: 927}
-duplicate_campaign_map_ids = { 115: 118 }
-
 output_fixtures = []
 
 print("Fetching causes")
@@ -91,9 +117,16 @@ organisations: dict = requests.get('https://staging.api.now-u.com/api/v1/organis
 print("Fetching faqs")
 faqs: dict = requests.get('https://staging.api.now-u.com/api/v1/faqs').json()['data']
 
+# duplicate_action_ids = { 770: 746, 322: 761, 411: 762, 421: 154, 481: 100, 577: 764, 586: 765 }
+duplicate_action_ids = get_duplicate_actions(actions)
+# duplicate_learning_resource_ids = {1061: 604, 1062: 620, 397: 390, 497: 496, 660: 632, 802: 801, 1035: 544, 976: 150, 144: 973, 145: 974, 146: 961, 148: 975, 830: 927}
+duplicate_learning_resource_ids = get_duplicate_learning_resources(learning_resources)
+duplicate_campaign_map_ids = { 115: 118 }
+
+
 number_of_created_images = 0
 
-DOWNLOAD_IMAGES = False
+DOWNLOAD_IMAGES = True
 
 def create_image(current_image_url: str) -> int:
     global number_of_created_images
@@ -108,7 +141,8 @@ def create_image(current_image_url: str) -> int:
             # file_name_from_url = current_image_url.split('filename%2A%3DUTF-8%27%27')[-1].split('&')[0]
             # print(f"File name from url {file_name_from_url}")
             # file_name = f"{number_of_created_images}-{file_name_from_url}"
-                with open(f"../deploy/causes_service/media/images/{file_name}", 'wb') as f:
+                with open(f"./images/{file_name}", 'wb') as f:
+                # with open(f"../deploy/causes_service/media/images/{file_name}", 'wb') as f:
                     shutil.copyfileobj(response.raw, f)
                     print('Image sucessfully Downloaded: ', file_name)
             else:
@@ -302,36 +336,6 @@ output_fixtures.extend([
 
 with open('fixtures.json', 'w') as f:
     json.dump(output_fixtures, f, indent=2)
-
-def get_duplicate_actions():
-    actions: dict = requests.get('https://staging.api.now-u.com/api/v2/actions').json()['data']
-    print(set(action['type'] for action in actions))
-
-    titles: dict[str, int] = {}
-    # X is a duplicate of Y
-    duplicate_titles_ids: dict[int, int] = {}
-    for action in actions:
-        if action['title'] in titles:
-            duplicate_titles_ids[action['id']] = titles[action['title']]
-        else:
-            titles[action['title']] = action['id']
-
-    print(duplicate_titles_ids)
-
-def get_duplicate_learning_resources():
-    learning_resources: dict = requests.get('https://staging.api.now-u.com/api/v2/learning_resources').json()['data']
-    print(set(resource['type'] for resource in learning_resources))
-
-    titles: dict[str, int] = {}
-    # X is a duplicate of Y
-    duplicate_titles_ids: dict[int, int] = {}
-    for resource in learning_resources:
-        if resource['title'] in titles:
-            duplicate_titles_ids[resource['id']] = titles[resource['title']]
-        else:
-            titles[resource['title']] = resource['id']
-
-    print(duplicate_titles_ids)
 
 def get_duplicate_campaigns():
     list_campaigns: dict = requests.get('https://staging.api.now-u.com/api/v2/campaigns').json()['data']
