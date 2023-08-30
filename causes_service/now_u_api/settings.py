@@ -284,3 +284,8 @@ MAILCHIMP = {
     'LIST_ID': get_required_env('MAILCHIMP_LIST_ID'),
     'SERVER': get_required_env('MAILCHIMP_SERVER'),
 }
+
+
+class MEILISEARCH:
+    URL = get_required_env('MEILISEARCH_URL')
+    MASTER_KEY = get_required_env('MEILISEARCH_MASTER_KEY')

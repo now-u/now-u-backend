@@ -1,0 +1,13 @@
+encryptionsalt: v1:r/JfP6WGOLc=:v1:k7YApsBvjlI+a4qk:m4eNutzcBWnGb0bb+yPKnzSg5CQLXw==
+config:
+  azure-native:clientId: 1ee7d476-232f-4241-9558-ae4199712d31
+  azure-native:clientSecret:
+    secure: v1:EJ7LW2+37RFh2c4C:e43Oq4PssjoIcZt4Qbj1LUeqBl3VFX46oIPSPihjcCLSV1u1fZV7wcrw9BnqPV0VdeFZ5VlpFZU=
+  azure-native:subscriptionId: 1fb15a71-24b0-4e41-ae09-c019f19085ce
+  azure-native:tenantId: e83a0d0d-d016-4fad-ae67-12af4e1bb938
+  cloudflare:apiToken:
+    secure: v1:/nshd77cDkJVQgdg:LAbeVWhuaCw4AbDH412ogvOeNqtW+FKm5U362KSWX8wNMPA4ru4muWSvcIiJglVd8wEHf18CXhA=
+  now-u-infra-search:cloudflareZoneId:
+    secure: v1:IcUhwrD4FroDBVjw:VKuPqRmYknoxVkdSFzvIA8IHnZCRUiFK/hSOMgSTpaWT/elSGibHrSp58v6CPuov
+  now-u-infra-search:meiliMasterKey:
+    secure: v1:tcgodqy6EXBNwfss:8b5X3COXus3T0hWV1Lttk2Qq8IXLyoU3BNSDoIOMUo6euhC/+9NpBIsyXz1JJ/Im

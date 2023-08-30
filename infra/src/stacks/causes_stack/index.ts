@@ -6,8 +6,10 @@ import { Application, Database } from "../../components";
 import { BaseStackReference } from '../base_stack';
 import { BASE_DOMAIN, CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME } from "../../utils/constants";
 import { JitRequest } from "@pulumi/azure-native/solutions/jitRequest";
+import { getCurrentStack } from "../../utils/stack";
+import { SearchStackReference } from "../search_stack";
 
-export async function causesStackFunction(baseStackOutput: BaseStackReference): Promise<Record<string, any>> {
+export async function causesStackFunction(baseStackOutput: BaseStackReference, searchStackOutput: SearchStackReference): Promise<Record<string, any>> {
 	const config = new pulumi.Config()
 	
 	const database = new Database(
@@ -49,9 +51,7 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 		}
 	)
 	
-	const currentStack = new pulumi.StackReference(
-		`${pulumi.getOrganization()}/${pulumi.getProject()}/${pulumi.getStack()}`
-	)
+	const currentStack = getCurrentStack();
 
     const containerAppIdOutputName = "causes-container-app-id" as const;
 	const containerAppIdOutputValue = currentStack.getOutput(containerAppIdOutputName) as pulumi.Output<string>;
@@ -129,6 +129,14 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference): 
 				{
 					name: "MAILCHIMP_SERVER",
                     value: config.require("mailchimpServer"),
+				},
+				{
+					name: "MEILISEARCH_URL",
+                    value: searchStackOutput.url.value,
+				},
+				{
+					name: "MEILISEARCH_MASTER_KEY",
+                    value: searchStackOutput.masterKey.value,
 				},
 			],
 			containerAppIdOutputValue,

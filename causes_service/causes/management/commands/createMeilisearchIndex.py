@@ -1,13 +1,14 @@
 from django.core.management.base import BaseCommand
 import meilisearch
 from causes.search import SEARCH_INDICIES
+from now_u_api.settings import MEILISEARCH
+from utils.meilisearch import create_meilisearch_client
 
 class Command(BaseCommand):
     help = 'Create Meilisearch indicies'
 
     def handle(self, *args, **options):
-        # TODO Create static client
-        client = meilisearch.Client('http://127.0.0.1:7700', 'masterKey')
+        client = create_meilisearch_client()
 
         for index in SEARCH_INDICIES:
             try:

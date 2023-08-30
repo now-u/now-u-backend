@@ -20,6 +20,7 @@ export type ApplicationArgs = {
 
 export class Application extends pulumi.ComponentResource {
 	containerAppId: pulumi.Output<string>
+	domain: string
 
 	constructor(name: string, args: ApplicationArgs, opts?: pulumi.ComponentResourceOptions) {
 		super("infra_shared_components:components:Application", name, {}, opts);
@@ -29,6 +30,7 @@ export class Application extends pulumi.ComponentResource {
 		const resourceGroupName = args.baseStackOutput.resourceGroupName;
 
 		const domain = `${args.domainPrefix}.${BASE_DOMAIN}`
+		this.domain = domain
 		const txtRecord = new cloudflare.Record(
 			`${args.domainPrefix}-dns-verification-txt`,
 			{

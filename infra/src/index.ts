@@ -4,8 +4,9 @@ import { command, run, boolean, positional, string, flag, subcommands, optional,
 
 import path from "path";
 import { baseStackFunction, BaseStackReference } from './stacks/base_stack';
-import { BASE_STACK_PROJECT_NAME, CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME, CAUSES_STACK_PROJECT_NAME } from "./utils/constants";
+import { BASE_STACK_PROJECT_NAME, CAUSES_SERVICE_IMAGE_TAG_INPUT_NAME, CAUSES_STACK_PROJECT_NAME, SEARCH_STACK_PROJECT_NAME } from "./utils/constants";
 import { causesStackFunction } from "./stacks/causes_stack";
+import { searchStackFunction, SearchStackReference } from "./stacks/search_stack";
 
 async function createBaseStack() {
 	const baseStackArgs: InlineProgramArgs = {
@@ -21,11 +22,11 @@ async function createBaseStack() {
 	return baseStack;
 }
 
-async function createCausesStack(baseStackOutputs: BaseStackReference, imageTag: string) {
+async function createCausesStack(baseStackOutputs: BaseStackReference, searchStackOutputs: SearchStackReference, imageTag: string) {
 	const causesStackArgs: InlineProgramArgs = {
         stackName: "dev",
         projectName: CAUSES_STACK_PROJECT_NAME,
-        program: () => causesStackFunction(baseStackOutputs),
+        program: () => causesStackFunction(baseStackOutputs, searchStackOutputs),
 	}
 
 	const causesStack = await LocalWorkspace.createOrSelectStack(causesStackArgs, { workDir: path.dirname(__dirname) + '/src/stacks/causes_stack'});
@@ -39,6 +40,26 @@ async function createCausesStack(baseStackOutputs: BaseStackReference, imageTag:
 
 	return causesStack
 }
+
+async function createSearchStack(baseStackOutputs: BaseStackReference, imageTag: string) {
+	const searchStackArgs: InlineProgramArgs = {
+        stackName: "dev",
+        projectName: SEARCH_STACK_PROJECT_NAME,
+        program: () => searchStackFunction(baseStackOutputs),
+	}
+
+	const searchStack = await LocalWorkspace.createOrSelectStack(searchStackArgs, { workDir: path.dirname(__dirname) + '/src/stacks/search_stack'});
+
+	await searchStack.workspace.installPlugin("azure-native", "2.3.0");
+	await searchStack.workspace.installPlugin("cloudflare", "5.8.0");
+	await searchStack.workspace.installPlugin("docker", "4.3.1");
+	// TODO Remove?
+	await searchStack.workspace.installPlugin("github", "5.16.0");
+
+	return searchStack
+}
+
+
 
 type UpArgs = {
 	baseOnly: true
@@ -56,10 +77,13 @@ async function up(args: UpArgs) {
 	if (args.baseOnly) {
 		return
 	}
+	
+	const searchStack = await createSearchStack(baseStackUpResult.outputs as BaseStackReference, args.imageTag);
+	const searchStackUpResult = await searchStack.up({ onOutput: console.info, color: "always" });
+	console.log(`Search stack summary: \n${JSON.stringify(searchStackUpResult.summary.resourceChanges, null, 4)}`);
 
-	const causesStack = await createCausesStack(baseStackUpResult.outputs as BaseStackReference, args.imageTag);
+	const causesStack = await createCausesStack(baseStackUpResult.outputs as BaseStackReference, searchStackUpResult.outputs as SearchStackReference, args.imageTag);
 	const causesStackUpResult = await causesStack.up({ onOutput: console.info, color: "always" });
-
 	console.log(`Causes stack summary: \n${JSON.stringify(causesStackUpResult.summary.resourceChanges, null, 4)}`);
 }
 
