@@ -16,6 +16,9 @@ export type ApplicationArgs = {
 
 	containerAppIdOutputValue: pulumi.Output<string>,
 	baseStackOutput: BaseStackReference,
+
+	minReplicas?: number,
+	maxReplicas?: number,
 };
 
 export class Application extends pulumi.ComponentResource {
@@ -81,7 +84,8 @@ export class Application extends pulumi.ComponentResource {
 				{
 					template: {
 						scale: {
-							minReplicas: 1,
+							minReplicas: args.minReplicas ?? 1,
+							maxReplicas: args.maxReplicas,
 						},
 						containers: [
 							{

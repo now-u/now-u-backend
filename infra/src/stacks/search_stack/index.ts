@@ -31,6 +31,8 @@ export async function searchStackFunction(baseStackOutput: BaseStackReference) {
 					value: masterKey,
 				}
 			],
+			// TODO We need to ensure replicas seed them selves upon spin up/share db. Until then we can only have a single replica which we seed manually
+			maxReplicas: 1,
 		}
 	);
 	
