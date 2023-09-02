@@ -1,6 +1,5 @@
 from typing import Any
 from rest_framework import serializers
-from rest_framework.relations import method_overridden
 
 from users.models import User
 from causes.models import Cause

@@ -1,5 +1,4 @@
 import pytest
-from typing import Any
 from rest_framework.test import APIClient
 
 from users.models import User

@@ -7,6 +7,9 @@ up:
 	docker-compose up -d
 	./manage.py runserver 0.0.0.0:8000
 
+test: ## Run component tests
+	pytest
+
 migrate:
 	./manage.py migrate
 

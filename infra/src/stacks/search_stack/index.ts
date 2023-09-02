@@ -31,7 +31,10 @@ export async function searchStackFunction(baseStackOutput: BaseStackReference) {
 					value: masterKey,
 				}
 			],
-			// TODO We need to ensure replicas seed them selves upon spin up/share db. Until then we can only have a single replica which we seed manually
+			// For now meilisearch doesn't support distributed deployments
+			// https://github.com/meilisearch/meilisearch/discussions/1095
+			// For now if multiple replicas are allowed only one replica 
+			// will be updated when pushing to the index
 			maxReplicas: 1,
 		}
 	);

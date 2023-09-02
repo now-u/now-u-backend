@@ -148,7 +148,7 @@ def create_image(current_image_url: str) -> int:
             else:
                 raise Exception("Image donwload failed")
     except Exception:
-        file_name = f"error.png"
+        file_name = "error.png"
         print('Image Couldn\'t be retrieved')
 
     # TODO For now if we cannot donwload an image we just use some other image

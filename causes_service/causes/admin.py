@@ -4,7 +4,6 @@ from django import forms
 from django.http.request import HttpRequest
 from images.admin import AdminImageWidget
 
-from images.models import Image
 from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation, OrganisationExtraLink, Theme
 
 def split_release_info(fieldsets):

@@ -4,13 +4,13 @@ description: 'Build and push causes service image'
 inputs:
   registry-url:
     description: 'Registry url to push the image to'
-    required: true
+    required: false
   registry-username:
     description: 'Target registry username'
-    required: true
+    required: false
   registry-password:
     description: 'Target registry password'
-    required: true
+    required: false
 
 outputs:
   causes-image-tag:
@@ -44,6 +44,6 @@ runs:
       uses: docker/build-push-action@v4
       with:
         context: "{{defaultContext}}:causes_service"
-        push: true
+        push: ${{ inputs.registry-url != null }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

@@ -30,6 +30,8 @@ export async function baseStackFunction() {
 		})
 	)
 	
+	// TODO Worth looking at... could be simpler than having to implement this networking manually
+	// https://www.pulumi.com/registry/packages/azure-native/api-docs/servicelinker/linker/
 	const virtualNetwork = new azure.network.VirtualNetwork(
 		"nowu-infra-db-virtual-network",
 		{

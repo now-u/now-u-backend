@@ -6,3 +6,11 @@ django_settings_module = "now_u_api.settings"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "now_u_api.settings"
+
+[tool.ruff]
+exclude = [
+	"**/migrations/*",
+]
+
+# TODO Probably worth reducing this
+line-length = 300

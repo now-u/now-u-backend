@@ -1,8 +1,6 @@
-from rest_framework import mixins, viewsets, generics
-from django.db.models import QuerySet
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from .models import User
 from .serializers import CausesUserSerializer, UserProfileSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

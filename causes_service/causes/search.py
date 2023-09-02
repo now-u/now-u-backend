@@ -1,4 +1,4 @@
-from typing import Optional
+from datetime import datetime
 from django.db.models.query import QuerySet
 import meilisearch
 from dataclasses import dataclass
@@ -37,6 +37,9 @@ class ModelSearchIndex:
     def delete_search_index(self, client: meilisearch.Client):
         client.delete_index(self.index_name)
 
+
+# TODO On any update to resources, push to search service
+# TODO Filter for enabled resources only!
 SEARCH_INDICIES = [
     ModelSearchIndex(
         index_name='learning_resources',
@@ -44,7 +47,7 @@ SEARCH_INDICIES = [
         filterable_attributes=['id', 'time', 'source', 'causes.id'],
         model=LearningResource,
         serializer=LearningResourceSerializer,
-        queryset=LearningResource.objects.filter(causes__gte=1)
+        queryset=LearningResource.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='actions',
@@ -52,7 +55,7 @@ SEARCH_INDICIES = [
         filterable_attributes=['id', 'time', 'of_the_month', 'suggested', 'action_type', 'causes.id'],
         model=Action,
         serializer=ListActionSerializer,
-        queryset=Action.objects.filter(causes__gte=1)
+        queryset=Action.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='campaigns',
@@ -60,7 +63,7 @@ SEARCH_INDICIES = [
         filterable_attributes=['id', 'of_the_month', 'suggested', 'causes.id'],
         model=Campaign,
         serializer=ListCampaignSerializer,
-        queryset=Campaign.objects.filter(causes__gte=1)
+        queryset=Campaign.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='news_articles',
@@ -68,6 +71,6 @@ SEARCH_INDICIES = [
         filterable_attributes=[],
         model=NewsArticle,
         serializer=NewsArticleSerializer,
-        queryset=NewsArticle.objects.all()
+        queryset=NewsArticle.objects.filter_active(is_active_at=datetime.now())
     ),
 ]

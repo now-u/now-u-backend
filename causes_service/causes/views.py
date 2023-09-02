@@ -1,15 +1,14 @@
+from datetime import datetime
 from typing import Any
 from django.db.models import QuerySet
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from users.models import User
 
-from utils.serializers import get_user_from_context
 
 from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation
-from .serializers import CauseSerializer, LearningResourceSerializer, ActionSerializer, CampaignSerializer, ListCampaignSerializer, CauseSerializer, ListActionSerializer, NewsArticleSerializer, OrganisationSerializer, CauseIdsSerializer
+from .serializers import CauseSerializer, LearningResourceSerializer, ActionSerializer, CampaignSerializer, ListCampaignSerializer, ListActionSerializer, NewsArticleSerializer, OrganisationSerializer, CauseIdsSerializer
 
 class CauseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cause.objects.all()
@@ -24,7 +23,8 @@ class CauseViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'ok'})
 
 class ActionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Action.objects.all()
+    # TODO Move this to get_query because idk when datetime.now is called!
+    queryset = Action.objects.filter_active(is_active_at=datetime.now())
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -48,7 +48,7 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'ok'})
 
 class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = LearningResource.active_queryset()
+    queryset = LearningResource.objects.filter_active(is_active_at=datetime.now())
     serializer_class = LearningResourceSerializer
 
     def get_queryset(self) -> QuerySet[Any]:
@@ -68,7 +68,7 @@ class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'ok'})
 
 class CampaignViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Campaign.objects.all()
+    queryset = Campaign.objects.filter_active(is_active_at=datetime.now())
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -76,7 +76,7 @@ class CampaignViewSet(viewsets.ReadOnlyModelViewSet):
         return CampaignSerializer
 
 class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = NewsArticle.objects.all()
+    queryset = NewsArticle.objects.filter_active(is_active_at=datetime.now())
     serializer_class = NewsArticleSerializer
 
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):

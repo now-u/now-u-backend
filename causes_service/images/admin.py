@@ -1,14 +1,11 @@
 from django.contrib import admin
+from django.contrib.admin.widgets import AdminFileWidget
+from django.utils.safestring import mark_safe
 
 from images.models import Image
 
-# Register your models here.
+
 admin.site.register(Image)
-
-from django.contrib.admin.widgets import AdminFileWidget
-from django.utils.safestring import mark_safe
-from django.contrib import admin
-
 
 class AdminImageWidget(AdminFileWidget):
     def render(self, name, value, attrs=None, **kwargs):

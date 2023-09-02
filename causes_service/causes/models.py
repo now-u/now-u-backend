@@ -13,17 +13,28 @@ class TimestampMixin(models.Model):
     class Meta:
         abstract = True
 
+class ReleaseControlManager(models.Manager):
+    def filter_active(self, is_active_at: datetime, is_active=True):
+        release_query = Q(release_at=None) | Q(release_at__lte=is_active_at)
+        end_query = Q(end_at=None) | Q(end_at__gte=is_active_at)
+        active_query = Q(enabled=True) & release_query & end_query
+        if not is_active:
+            active_query = ~active_query
+        return self.filter(active_query)
+
 class ReleaseControlMixin(models.Model):
     release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'), null=True, blank=True)
     end_at = models.DateTimeField(help_text=_('The date from which this resource should no longer be available in the app. If not provided the reosurce will stay visible after its released'), null=True, blank=True)
     enabled = models.BooleanField(default=False)
+
+    objects = ReleaseControlManager()
 
     # TODO Add to qury set
     def active(self) -> bool:
         # TODO Handle TZ
         now = datetime.now()
 
-        if self.enabled == False:
+        if self.enabled is False:
             return False
 
         if self.release_at is not None and now < self.release_at:
@@ -33,16 +44,6 @@ class ReleaseControlMixin(models.Model):
             return False
 
         return True
-
-    # TODO Add to manager
-    @classmethod
-    def active_queryset(cls):
-        # Check TZ is UTC
-        now = datetime.now()
-        release_query = Q(release_at=None) | Q(release_at__lte=now)
-        end_query = Q(end_at=None) | Q(end_at__gte=now)
-        active_query = Q(enabled=True) & release_query & end_query
-        return cls.objects.filter(active_query)
 
     class Meta:
         abstract = True
@@ -100,6 +101,8 @@ class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
         # REPORT = 'REPORT', _('Report'),
         # STORY = 'STORY', _('Story')
 
+    campaigns: models.QuerySet['Campaign']
+
     title = models.CharField(max_length=200, unique=True)
     time = models.IntegerField()
     link = models.URLField(max_length=500)
@@ -113,6 +116,9 @@ class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
     def complete(self, user_id: str):
         # TODO Block this (and for other resources) if user_id is null
         UserLearningResources.objects.create(user_id=user_id, learning_resource=self)
+
+        for campaign in self.campaigns.all():
+            campaign.compute_is_completed(user_id)
 
     def __str__(self) -> str:
         return self.title
@@ -132,6 +138,8 @@ class Action(ReleaseControlMixin, TimestampMixin, models.Model):
         LEARN = 'LEARN', _('Learn'),
         QUIZ = 'QUIZ', _('Quiz'),
         OTHER = 'OTHER', _('Other')
+
+    campaigns: models.QuerySet['Campaign']
 
     title = models.CharField(max_length=200, unique=True)
     link = models.URLField(max_length=3000)
@@ -154,6 +162,9 @@ class Action(ReleaseControlMixin, TimestampMixin, models.Model):
 
     def uncomplete(self, user_id: str):
         UserAction.objects.filter(user_id=user_id, action=self).delete()
+
+        for campaign in self.campaigns.all():
+            campaign.compute_is_completed(user_id)
 
     def __str__(self) -> str:
         return self.title

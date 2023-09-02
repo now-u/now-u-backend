@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand
-import meilisearch
 from causes.search import SEARCH_INDICIES
-from now_u_api.settings import MEILISEARCH
 from utils.meilisearch import create_meilisearch_client
 
 class Command(BaseCommand):
