@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from users.models import User
 from images.models import Image
+from utils.models import TimeStampedMixin
 
 class TimestampMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -17,15 +18,14 @@ class ReleaseControlManager(models.Manager):
     def filter_active(self, is_active_at: datetime, is_active=True):
         release_query = Q(release_at=None) | Q(release_at__lte=is_active_at)
         end_query = Q(end_at=None) | Q(end_at__gte=is_active_at)
-        active_query = Q(enabled=True) & release_query & end_query
+        active_query = release_query & end_query
         if not is_active:
             active_query = ~active_query
         return self.filter(active_query)
 
-class ReleaseControlMixin(models.Model):
-    release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'), null=True, blank=True)
+class ReleaseControlMixin(TimeStampedMixin, models.Model):
+    release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'))
     end_at = models.DateTimeField(help_text=_('The date from which this resource should no longer be available in the app. If not provided the reosurce will stay visible after its released'), null=True, blank=True)
-    enabled = models.BooleanField(default=False)
 
     objects = ReleaseControlManager()
 
@@ -33,9 +33,6 @@ class ReleaseControlMixin(models.Model):
     def active(self) -> bool:
         # TODO Handle TZ
         now = datetime.now()
-
-        if self.enabled is False:
-            return False
 
         if self.release_at is not None and now < self.release_at:
             return False
@@ -66,6 +63,7 @@ class Cause(models.Model):
     actions = models.ManyToManyField('Action', related_name='causes', blank=True)
     learning_resources = models.ManyToManyField('LearningResource', related_name='causes', blank=True)
     campaigns = models.ManyToManyField('Campaign', related_name='causes', blank=True)
+    # TODO Add news articles?
 
     def header_image_preview(self):
         return self.header_image.image_preview()

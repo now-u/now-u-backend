@@ -12,7 +12,7 @@ config:
     secure: v1:vnIf9z4UdB7BSm1J:QfiN4+R5jMbIS1SJGRf7xO6rmShB4yyq4bJH1dgPepaD9xnIw6FIcljQqrUXpjU2sATVEtF07sKWBdxbe/LVK98U0bc2fA5F029YEtzCiyUeFrXDVndtTUnBDwfSqVsoWSl9Nuhhe8xej/oVIg==
   now-u-infra-causes:authServiceJwtSecret:
     secure: v1:YIIUFUAR3eD8aDpz:zGGcvostV/+XOiRhN6A2OqUu2SjCEhsPfTji0MxLxhgHtwSCaKIFgjJZEa6NixP2tEgJi2o6+xHWsZnU47CX8yZBGSP2KloJmvXUTag0EpAi+nq+nrwEFKaknwHQfAHVczZG//GLru8=
-  now-u-infra-causes:causesServiceImageTag: nowuregistry.azurecr.io/now-u-causes:sha-d245188
+  now-u-infra-causes:causesServiceImageTag: nowuregistry.azurecr.io/now-u-causes:sha-0ef5043
   now-u-infra-causes:cloudflareZoneId:
     secure: v1:DpKeOcJcCDcE0G6r:GH2ugCOBXqzjjJWedxSKNODFQ6Z4JA16c+KcMPm8gH32tZdKNrYb54f6drxFNYk3
   now-u-infra-causes:djangoAdminEmail:

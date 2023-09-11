@@ -42,7 +42,7 @@ class ActionFactory(factory.django.DjangoModelFactory):
 
     created_at = factory.Faker("date_time")
     updated_at = factory.Faker("date_time")
-    enabled = True
+    release_at = factory.Faker("past_datetime")
 
 class LearningResourceFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -53,7 +53,7 @@ class LearningResourceFactory(factory.django.DjangoModelFactory):
     link = factory.Faker("url")
     learning_resource_type = factory.fuzzy.FuzzyChoice(LearningResource.Type.values)
     source = factory.Faker("sentence")
-    enabled = True
+    release_at = factory.Faker("past_datetime")
 
 class CampaignFactory(factory.django.DjangoModelFactory, metaclass=BaseMetaFactory[Campaign]):
     class Meta:
@@ -65,7 +65,7 @@ class CampaignFactory(factory.django.DjangoModelFactory, metaclass=BaseMetaFacto
     header_image = factory.SubFactory(ImageFactory)
     of_the_month = factory.Faker("boolean")
     suggested = factory.Faker("boolean")
-    enabled = True
+    release_at = factory.Faker("past_datetime")
 
     @factory.post_generation
     def actions(self, create, extracted, **kwargs):

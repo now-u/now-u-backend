@@ -9,7 +9,7 @@ from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Orga
 def split_release_info(fieldsets):
     current_field: list[str] = fieldsets[0][1]['fields']
 
-    release_fields = ('enabled', 'release_at', 'end_at')
+    release_fields = ('release_at', 'end_at')
     for field in release_fields:
         current_field.remove(field)
 

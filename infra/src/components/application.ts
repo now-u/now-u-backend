@@ -9,6 +9,9 @@ import { BASE_DOMAIN } from "../utils/constants";
 
 export type ApplicationArgs = {
 	env: pulumi.Input<pulumi.Input<azure.types.input.app.EnvironmentVarArgs>[]>,
+	// TODO Merge
+	volumes?: pulumi.Input<pulumi.Input<azure.types.input.app.VolumeArgs>[]>,
+	volumeMounts?: pulumi.Input<pulumi.Input<azure.types.input.app.VolumeMountArgs>[]>,
 	containerPort: number,
 	domainPrefix: string,
 	imageName: string,
@@ -87,6 +90,7 @@ export class Application extends pulumi.ComponentResource {
 							minReplicas: args.minReplicas ?? 1,
 							maxReplicas: args.maxReplicas,
 						},
+						volumes: args.volumes,
 						containers: [
 							{
 								name: args.imageName,
@@ -97,6 +101,7 @@ export class Application extends pulumi.ComponentResource {
 									memory: "2Gi",
 								},
 								env: args.env,
+								volumeMounts: args.volumeMounts,
 							},
 						]
 					},

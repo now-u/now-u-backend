@@ -1,4 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
+import * as azure from "@pulumi/azure-native";
 import { Application } from "../../components";
 import { StackCreationOutput } from "../../utils/outputType";
 import { getCurrentStack } from "../../utils/stack";
@@ -16,6 +17,55 @@ export async function searchStackFunction(baseStackOutput: BaseStackReference) {
 	const domainPrefix = "search"
 
 	const masterKey = config.requireSecret('meiliMasterKey')
+	
+	// TODO Share one storage account or create shared construct to create one
+	const storageAccount = new azure.storage.StorageAccount(
+		"searchstatic",
+		{
+			resourceGroupName: baseStackOutput.resourceGroupName.value,
+			kind: azure.storage.Kind.StorageV2,
+			sku: {
+				name: azure.storage.SkuName.Standard_LRS,
+			},
+			accessTier: azure.storage.AccessTier.Hot,
+		}
+	)
+
+	const fileShare = new azure.storage.FileShare(
+		"searchMeilidataFileShare",
+		{
+			accountName: storageAccount.name,
+			resourceGroupName: baseStackOutput.resourceGroupName.value,
+			enabledProtocols: azure.types.enums.storage.EnabledProtocols.SMB,
+			shareQuota: 1024,
+			shareName: 'meilisearch-fileshare',
+		}
+	)
+
+	const storageAccountKey = pulumi.all(
+		[storageAccount.name, baseStackOutput.resourceGroupName.value]
+	).apply(([accountName, resourceGroupName]) =>
+		azure.storage.listStorageAccountKeys({
+			accountName,
+			resourceGroupName,
+		})
+	).apply(({keys}) => keys[0].value!)
+
+	const managedEnvironmentsStorage = new azure.app.ManagedEnvironmentsStorage("searchAppStorage", {
+		environmentName: baseStackOutput.containerAppEnvironmentName.value,
+		storageName: "search-app-storage",
+    	properties: {
+    	    azureFile: {
+    	        accessMode: azure.types.enums.app.AccessMode.ReadWrite,
+    	        accountKey: storageAccountKey,
+    	        accountName: storageAccount.name,
+    	        shareName: fileShare.name,
+    	    },
+    	},
+    	resourceGroupName: baseStackOutput.resourceGroupName.value,
+	});
+	
+
 	const app = new Application(
 		`search-service-app`,
 		{
@@ -29,6 +79,19 @@ export async function searchStackFunction(baseStackOutput: BaseStackReference) {
 				{
 					name: 'MEILI_MASTER_KEY',
 					value: masterKey,
+				}
+			],
+			volumes: [
+				{
+					name: 'meili-data',
+					storageType: azure.types.enums.app.StorageType.AzureFile,
+					storageName: managedEnvironmentsStorage.name,
+				}
+			],
+			volumeMounts: [
+				{
+					volumeName: 'meili-data',
+					mountPath: '/meili_data',
 				}
 			],
 			// For now meilisearch doesn't support distributed deployments

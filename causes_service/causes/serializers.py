@@ -25,7 +25,7 @@ class ListActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         # TODO Completed
-        fields = ['id', 'title', 'action_type', 'causes', 'time', 'created_at', 'release_at', 'of_the_month']
+        fields = ['id', 'title', 'action_type', 'causes', 'time', 'created_at', 'release_at', 'of_the_month', 'suggested']
 
 class LearningResourceSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
@@ -42,7 +42,7 @@ class ListCampaignSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campaign
         # TODO
-        fields = ['id', 'title', 'short_name', 'causes', 'header_image', 'of_the_month']
+        fields = ['id', 'title', 'short_name', 'causes', 'header_image', 'of_the_month', 'suggested', 'release_at']
 
 class ActionSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
