@@ -21,14 +21,16 @@ class CauseSerializer(serializers.ModelSerializer):
 
 class ListActionSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
+    release_at_timestamp = serializers.FloatField()
 
     class Meta:
         model = Action
         # TODO Completed
-        fields = ['id', 'title', 'action_type', 'causes', 'time', 'created_at', 'release_at', 'of_the_month', 'suggested']
+        fields = ['id', 'title', 'action_type', 'causes', 'time', 'created_at', 'release_at', 'of_the_month', 'suggested', 'release_at_timestamp']
 
 class LearningResourceSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
+    release_at_timestamp = serializers.FloatField()
 
     class Meta:
         model = LearningResource
@@ -38,11 +40,12 @@ class LearningResourceSerializer(serializers.ModelSerializer):
 class ListCampaignSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
     header_image = ImageSerializer()
+    release_at_timestamp = serializers.FloatField()
 
     class Meta:
         model = Campaign
         # TODO
-        fields = ['id', 'title', 'short_name', 'causes', 'header_image', 'of_the_month', 'suggested', 'release_at']
+        fields = ['id', 'title', 'short_name', 'causes', 'header_image', 'of_the_month', 'suggested', 'release_at', 'release_at_timestamp']
 
 class ActionSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
@@ -78,6 +81,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 class NewsArticleSerializer(serializers.ModelSerializer):
     header_image = ImageSerializer()
+    release_at_timestamp = serializers.FloatField()
 
     class Meta:
         model = NewsArticle

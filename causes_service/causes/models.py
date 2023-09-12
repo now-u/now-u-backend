@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -34,13 +35,17 @@ class ReleaseControlMixin(TimeStampedMixin, models.Model):
         # TODO Handle TZ
         now = datetime.now()
 
-        if self.release_at is not None and now < self.release_at:
+        if now < self.release_at:
             return False
 
         if self.end_at is not None and now > self.end_at:
             return False
 
         return True
+
+    @property
+    def release_at_timestamp(self) -> float:
+        return time.mktime(self.release_at.timetuple())
 
     class Meta:
         abstract = True
