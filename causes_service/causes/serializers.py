@@ -21,7 +21,7 @@ class CauseSerializer(serializers.ModelSerializer):
 
 class ListActionSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
-    release_at_timestamp = serializers.FloatField()
+    release_at_timestamp = serializers.IntegerField()
 
     class Meta:
         model = Action
@@ -30,7 +30,7 @@ class ListActionSerializer(serializers.ModelSerializer):
 
 class LearningResourceSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
-    release_at_timestamp = serializers.FloatField()
+    release_at_timestamp = serializers.IntegerField()
 
     class Meta:
         model = LearningResource
@@ -40,7 +40,7 @@ class LearningResourceSerializer(serializers.ModelSerializer):
 class ListCampaignSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
     header_image = ImageSerializer()
-    release_at_timestamp = serializers.FloatField()
+    release_at_timestamp = serializers.IntegerField()
 
     class Meta:
         model = Campaign
@@ -81,7 +81,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 class NewsArticleSerializer(serializers.ModelSerializer):
     header_image = ImageSerializer()
-    release_at_timestamp = serializers.FloatField()
+    release_at_timestamp = serializers.IntegerField()
 
     class Meta:
         model = NewsArticle

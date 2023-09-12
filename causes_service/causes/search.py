@@ -44,7 +44,7 @@ SEARCH_INDICIES = [
     ModelSearchIndex(
         index_name='learning_resources',
         searchable_attributes=['title', 'source'],
-        filterable_attributes=['id', 'time', 'source', 'causes.id'],
+        filterable_attributes=['id', 'time', 'source', 'causes.id', 'release_at_timestamp', 'suggested', 'of_the_month'],
         model=LearningResource,
         serializer=LearningResourceSerializer,
         queryset=LearningResource.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
@@ -52,7 +52,7 @@ SEARCH_INDICIES = [
     ModelSearchIndex(
         index_name='actions',
         searchable_attributes=['title', 'what_description', 'why_description'],
-        filterable_attributes=['id', 'time', 'of_the_month', 'suggested', 'action_type', 'causes.id'],
+        filterable_attributes=['id', 'time', 'of_the_month', 'suggested', 'action_type', 'causes.id', 'release_at_timestamp'],
         model=Action,
         serializer=ListActionSerializer,
         queryset=Action.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
@@ -60,14 +60,14 @@ SEARCH_INDICIES = [
     ModelSearchIndex(
         index_name='campaigns',
         searchable_attributes=['title', 'short_name', 'description'],
-        filterable_attributes=['id', 'of_the_month', 'suggested', 'causes.id'],
+        filterable_attributes=['id', 'of_the_month', 'suggested', 'causes.id', 'release_at_timestamp'],
         model=Campaign,
         serializer=ListCampaignSerializer,
         queryset=Campaign.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='news_articles',
-        searchable_attributes=['title', 'subtitle', 'source'],
+        searchable_attributes=['title', 'subtitle', 'source', 'release_at_timestamp'],
         filterable_attributes=[],
         model=NewsArticle,
         serializer=NewsArticleSerializer,
