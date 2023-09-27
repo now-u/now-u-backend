@@ -73,7 +73,7 @@ export async function searchStackFunction(baseStackOutput: BaseStackReference) {
 			domainPrefix,
 			containerPort: 7700,
 			imageName: 'meilisearch',
-			imageTag: 'getmeili/meilisearch',
+			imageTag: 'getmeili/meilisearch:v1.3.4',
 			containerAppIdOutputValue,
 			env: [
 				{
