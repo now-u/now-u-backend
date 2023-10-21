@@ -3,6 +3,12 @@ import json
 import shutil
 from datetime import datetime
 
+
+# TODO Every campaign has a short name
+# Map through all short names
+# TODO Remove everything from topics except campaigns...
+# TODO Add header image to topics which is used as fallback to optional header image for campaign 
+
 def get_duplicate_actions(actions):
     print(set(action['type'] for action in actions))
 
@@ -123,12 +129,13 @@ duplicate_action_ids = get_duplicate_actions(actions)
 duplicate_learning_resource_ids = get_duplicate_learning_resources(learning_resources)
 duplicate_campaign_map_ids = { 115: 118 }
 
-
 number_of_created_images = 0
 
-DOWNLOAD_IMAGES = True
+DOWNLOAD_IMAGES = False
 
-def create_image(current_image_url: str) -> int:
+missing_images = []
+
+def create_image(current_image_url: str, image_location: str, resource_id: int) -> int:
     global number_of_created_images
     number_of_created_images += 1
 
@@ -146,6 +153,7 @@ def create_image(current_image_url: str) -> int:
                     shutil.copyfileobj(response.raw, f)
                     print('Image sucessfully Downloaded: ', file_name)
             else:
+                missing_images.append(f"resource and field: {image_location}, resource id: {resource_id}, image url: {current_image_url}")
                 raise Exception("Image donwload failed")
     except Exception:
         file_name = "error.png"
@@ -170,7 +178,7 @@ output_fixtures.extend([
             'title': cause['name'],
             'icon': cause['icon'],
             'description': cause['description'],
-            'header_image': create_image(cause['image']),
+            'header_image': create_image(cause['image'], "cause_header", cause['id']),
             'actions': [],
             'learning_resources': [],
             'campaigns': [],
@@ -251,7 +259,7 @@ output_fixtures.extend([
             'title': resource['title'],
             'short_name': resource['short_name'],
             'description': resource['description_app'],
-            'header_image': create_image(resource['header_image']),
+            'header_image': create_image(resource['header_image'], "campaign_header", resource['id']),
             'of_the_month': resource['of_the_month'],
             'suggested': resource['recommended'],
 
@@ -278,7 +286,7 @@ output_fixtures.extend([
         'fields': {
             'title': article['title'],
             'subtitle': article['subtitle'],
-            'header_image': create_image(article['header_image']),
+            'header_image': create_image(article['header_image'], "news_article_header", article['id']),
             'link': article['full_article_link'],
             'source': article['source'] or 'TODO Source',
             'created_at': article['created_at'],
@@ -296,7 +304,7 @@ for organisation in organisations:
         'fields': {
             'name': organisation['name'],
             'description': organisation['description'],
-            'logo': create_image(organisation['logo_link']),
+            'logo': create_image(organisation['logo_link'], "organisation_logo", organisation['id']),
             'website_link': organisation['website'],
             'email_address': organisation['email'],
             'geographic_reach': organisation['geographic_reach'],
@@ -334,6 +342,18 @@ output_fixtures.extend([
     for faq in faqs
 ])
 
+for (i, name) in enumerate(set(campaign['short_name'] for campaign in campaigns)):
+    output_fixtures.append(
+        {
+            'model': 'causes.theme',
+            'pk': i,
+            'fields': {
+                'title': name,
+                'campaigns': [campaign['id'] for campaign in campaigns if campaign['short_name'] == name]
+            }
+        }
+    )
+
 with open('fixtures.json', 'w') as f:
     json.dump(output_fixtures, f, indent=2)
 
@@ -352,11 +372,27 @@ def get_duplicate_campaigns():
             if learning_resources['id'] in [1061, 1062, 397, 497, 660, 802, 1035, 976, 144, 145, 146, 148, 830]:
                 print(f'Duplicate learning resource {learning_resources["id"]} in campaign {campaign["id"]}!') 
 
-def get_duplicate_organisations():
-    organisations: dict = requests.get('https://staging.api.now-u.com/api/v1/organisations').json()['data']
-
+def get_duplicate_organisations(organisations):
     print(set(organisation['organisation_type'] for organisation in organisations))
     print(list(organisation['id'] for organisation in organisations if organisation['organisation_type'] is None))
+
+print("Short names")
+print(set(campaign['short_name'] for campaign in campaigns))
+
+print("Issues report:")
+
+print("Actions with bad type:")
+print(list(action['id'] for action in actions if action_type(action['type']) == "OTHER"))
+
+print("Learning Resources with bad type:")
+print(list(lr['id'] for lr in learning_resources if learning_resource_type(lr['type']) == "OTHER"))
+
+print("Organisations with bad type:")
+print(list(organisation['id'] for organisation in organisations if organisation_type(organisation['organisation_type']) == "UNKNOWN"))
+
+print("Missing Images:")
+for image in missing_images:
+    print(image)
 
 # actions()
 # learning_resources()

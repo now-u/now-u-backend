@@ -3,6 +3,7 @@ import time
 import math
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
@@ -34,7 +35,7 @@ class ReleaseControlMixin(TimeStampedMixin, models.Model):
     # TODO Add to qury set
     def active(self) -> bool:
         # TODO Handle TZ
-        now = datetime.now()
+        now = timezone.now()
 
         if now < self.release_at:
             return False
@@ -69,7 +70,7 @@ class Cause(models.Model):
     actions = models.ManyToManyField('Action', related_name='causes', blank=True)
     learning_resources = models.ManyToManyField('LearningResource', related_name='causes', blank=True)
     campaigns = models.ManyToManyField('Campaign', related_name='causes', blank=True)
-    # TODO Add news articles?
+    news_articles = models.ManyToManyField('NewsArticle', related_name='new_articles', blank=True)
 
     def header_image_preview(self):
         return self.header_image.image_preview()
@@ -88,11 +89,7 @@ class Theme(models.Model):
     title = models.CharField(max_length=64)
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE)
     description = models.TextField()
-
-    actions = models.ManyToManyField('Action', related_name='themes', blank=True)
-    learning_resources = models.ManyToManyField('LearningResource', related_name='themes', blank=True)
     campaigns = models.ManyToManyField('Campaign', related_name='themes', blank=True)
-
 
 class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
     class Type(models.TextChoices):

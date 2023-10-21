@@ -33,13 +33,13 @@ class CauseAdmin(admin.ModelAdmin):
     readonly_fields = ['header_image_preview']
     list_display = ('title', 'id')
     search_fields = ('title', 'description')
-    filter_horizontal = ('themes', 'actions', 'learning_resources', 'campaigns')
+    filter_horizontal = ('themes', 'actions', 'learning_resources', 'campaigns', 'news_articles')
     form = CauseAdminForm
 
 class ThemeAdmin(admin.ModelAdmin):
     list_display = ('title', 'description', 'id')
     search_fields = ('title', 'description')
-    filter_horizontal = ('actions', 'learning_resources', 'campaigns')
+    filter_horizontal = ('campaigns',)
 
 # TODO Allow search by topic
 class ActionAdmin(admin.ModelAdmin):
