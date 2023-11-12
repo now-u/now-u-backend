@@ -131,20 +131,29 @@ duplicate_campaign_map_ids = { 115: 118 }
 
 number_of_created_images = 0
 
-DOWNLOAD_IMAGES = False
+DOWNLOAD_IMAGES = True
 
 missing_images = []
 
+output_fixtures.append({
+    'model': 'images.image',
+    'pk': 441,
+    'fields': {
+        # Fallback image
+        'image': "images/441",
+    }
+})
+
 def create_image(current_image_url: str, image_location: str, resource_id: int) -> int:
     global number_of_created_images
-    number_of_created_images += 1
 
     print(f"File name from url {current_image_url}")
-    try:
-        file_name = f"{number_of_created_images}"
-        if DOWNLOAD_IMAGES:
+    if DOWNLOAD_IMAGES:
+        try:
             response = requests.get(current_image_url, stream = True)
             if response.status_code == 200:
+                number_of_created_images += 1
+                file_name = f"{number_of_created_images}"
             # file_name_from_url = current_image_url.split('filename%2A%3DUTF-8%27%27')[-1].split('&')[0]
             # print(f"File name from url {file_name_from_url}")
             # file_name = f"{number_of_created_images}-{file_name_from_url}"
@@ -152,23 +161,27 @@ def create_image(current_image_url: str, image_location: str, resource_id: int) 
                 # with open(f"../deploy/causes_service/media/images/{file_name}", 'wb') as f:
                     shutil.copyfileobj(response.raw, f)
                     print('Image sucessfully Downloaded: ', file_name)
+
+                output_fixtures.append({
+                    'model': 'images.image',
+                    'pk': number_of_created_images,
+                    'fields': {
+                        'image': f"images/{file_name}",
+                    }
+                })
+                return number_of_created_images
             else:
                 missing_images.append(f"resource and field: {image_location}, resource id: {resource_id}, image url: {current_image_url}")
                 raise Exception("Image donwload failed")
-    except Exception:
-        file_name = "error.png"
-        print('Image Couldn\'t be retrieved')
 
-    # TODO For now if we cannot donwload an image we just use some other image
-
-    output_fixtures.append({
-        'model': 'images.image',
-        'pk': number_of_created_images,
-        'fields': {
-            'image': f"images/{file_name}",
-        }
-    })
-    return number_of_created_images
+        except Exception as e:
+            file_name = "error.png"
+            print('Image Couldn\'t be retrieved')
+            print(e)
+            return 441
+    else:
+        number_of_created_images += 1
+        return number_of_created_images
 
 output_fixtures.extend([
     {

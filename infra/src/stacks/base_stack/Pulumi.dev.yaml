@@ -19,6 +19,10 @@ config:
     secure: v1:TKobmcR8LoLGnkTX:zJ05z+YTTKCORoQ2ysnx7YMp0pmszvj3yn4eIHdPCHuC5HEV2JY+OulsmFMtDgIL
   now-u-infra-base:containerPort: "5000"
   now-u-infra-base:cpu: "1"
+  now-u-infra-base:databasePassword:
+    secure: v1:Wp/n1drJp9FPhxRN:6+CgY3CiItfEgzbgbNRRqxBUxJOlqjmRkMIWG8vc0ALtsMrb/ZmGr77ihhGt+BZnK8VhumxXs38c
+  now-u-infra-base:databaseUser:
+    secure: v1:qBhhuwYIwaXxRk0U:XbggsFFjKLmVZWRcBMhqaTyjyRh5MpVS2g==
   now-u-infra-base:djangoAdminEmail:
     secure: v1:3g4R8clt+61dG8JK:H5zEnLnNKOgxlqmN7H/oPtYogQD406BvskYMoHyXGiC3WWQaxlQRCDT5OTQawA==
   now-u-infra-base:djangoAdminPassword:

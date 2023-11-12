@@ -95,11 +95,11 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference, s
 				// TODO Fix
 				{
 					name: "DATABASE_USER",
-					value: "superduperadmin",
+					value: baseStackOutput.postgresUser.value,
 				},
 				{
 					name: "DATABASE_PASSWORD",
-					value: "superduperadmin",
+					value: baseStackOutput.postgresPassword.value,
 				},
 				{
 					name: "DATABASE_HOST",
@@ -143,6 +143,20 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference, s
 		}
 	);
 
+	const adminerContainerAppIdOutputName = "adminer-container-app-id" as const;
+	const adminerApp = new Application(
+		`adminer-app`,
+		{
+			baseStackOutput,
+			domainPrefix: undefined,
+			containerPort: 8080,
+			imageName: "adminer",
+			imageTag: "adminer:latest",
+			containerAppIdOutputValue: currentStack.getOutput(adminerContainerAppIdOutputName) as pulumi.Output<string>,
+			env: [],
+		}
+	);
+
 	// TODO Create shared component for this so you only have to give name of resource
 	// Will hvae to generate base64 content and replace registry name in there
 	new azure.containerregistry.Task('purge-cs-containers-task', {
@@ -169,5 +183,6 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference, s
 
 	return {
 		[containerAppIdOutputName]: app.containerAppId,
+		[adminerContainerAppIdOutputName]: adminerApp.containerAppId,
 	}
 }

@@ -9,6 +9,8 @@ import { StackCreationOutput } from "../../utils/outputType";
 export type BaseStackReference = StackCreationOutput<Awaited<ReturnType<typeof baseStackFunction>>>
 
 export async function baseStackFunction() {
+	const config = new pulumi.Config()
+
 	const resourceGroup = new azure.resources.ResourceGroup(
 		"nowu-infra-resource-group"
 	)
@@ -97,14 +99,17 @@ export async function baseStackFunction() {
 			subnetName: "nowu-infra-container-app-subnet",
 		}
 	)
+
+	const postgresUser = config.requireSecret("databaseUser")
+	const postgresPassword = config.requireSecret("databasePassword")
 	
 	const postgresServer = new azure.dbforpostgresql.Server(
 		"nowu-infra-db-server",
 		{
 			// TODO Move to secrets
 			serverName: "nowu-infra-db-server",
-			administratorLogin: "superduperadmin",
-			administratorLoginPassword: "superduperadmin",
+			administratorLogin: postgresUser,
+			administratorLoginPassword: postgresPassword,
 			backup: {
 				backupRetentionDays: 7,
 			},
@@ -187,6 +192,8 @@ export async function baseStackFunction() {
 		resourceGroupName: resourceGroup.name,
 		postgresServerName: postgresServer.name,
 		postgresServerFullyQualifiedDomainName: postgresServer.fullyQualifiedDomainName,
+		postgresUser: postgresUser,
+		postgresPassword: postgresPassword,
 		containerAppEnvironmentId: managedEnvironment.id,
 		containerAppEnvironmentName: managedEnvironment.name,
 		containerAppEnvironmentStaticIp: managedEnvironment.staticIp,
@@ -196,7 +203,7 @@ export async function baseStackFunction() {
 		registryName: registry.name,
 		registryUsername: registryCredentials.username!.apply(u => u!),
 		// TODO This must be a secret output
-		registryPassword: registryCredentials.passwords!.apply(p => p![0].value!),
+		registryPassword: pulumi.secret(registryCredentials.passwords!.apply(p => p![0].value!)),
 		// TODO This is not a secret ref
 		registryPasswordSecretRef: registryCredentials.passwords!.apply(p => p![0].name!),
 	}

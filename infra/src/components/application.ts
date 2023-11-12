@@ -13,7 +13,7 @@ export type ApplicationArgs = {
 	volumes?: pulumi.Input<pulumi.Input<azure.types.input.app.VolumeArgs>[]>,
 	volumeMounts?: pulumi.Input<pulumi.Input<azure.types.input.app.VolumeMountArgs>[]>,
 	containerPort: number,
-	domainPrefix: string,
+	domainPrefix: string | undefined,
 	imageName: string,
 	imageTag: string,
 
@@ -35,30 +35,35 @@ export class Application extends pulumi.ComponentResource {
 
 		const resourceGroupName = args.baseStackOutput.resourceGroupName;
 
-		const domain = `${args.domainPrefix}.${BASE_DOMAIN}`
-		this.domain = domain
-		const txtRecord = new cloudflare.Record(
-			`${args.domainPrefix}-dns-verification-txt`,
-			{
-				// TODO Can we use cloudlfare:zoneId?
-				zoneId: config.requireSecret("cloudflareZoneId"),
-				name: `asuid.${domain}`,
-				value: args.baseStackOutput.containerAppEnvironmentCustomDomainVerificationId.value,
-				type: "TXT",
-				ttl: 60,
-			}
-		)
+		const domain = args.domainPrefix ? `${args.domainPrefix}.${BASE_DOMAIN}`: undefined
 
-		const aRecord = new cloudflare.Record(
-			`${args.domainPrefix}-dns-verification-a`,
-			{
-				zoneId: config.requireSecret("cloudflareZoneId"),
-				name: domain,
-				value: args.baseStackOutput.containerAppEnvironmentStaticIp.value,
-				type: "A",
-				ttl: 60,
-			}
-		)
+		let txtRecord: cloudflare.Record | undefined;
+		let aRecord: cloudflare.Record | undefined;
+
+		if (domain !== undefined) {
+			txtRecord = new cloudflare.Record(
+				`${args.domainPrefix}-dns-verification-txt`,
+				{
+					// TODO Can we use cloudlfare:zoneId?
+					zoneId: config.requireSecret("cloudflareZoneId"),
+					name: `asuid.${domain}`,
+					value: args.baseStackOutput.containerAppEnvironmentCustomDomainVerificationId.value,
+					type: "TXT",
+					ttl: 60,
+				}
+			)
+
+			aRecord = new cloudflare.Record(
+				`${args.domainPrefix}-dns-verification-a`,
+				{
+					zoneId: config.requireSecret("cloudflareZoneId"),
+					name: domain,
+					value: args.baseStackOutput.containerAppEnvironmentStaticIp.value,
+					type: "A",
+					ttl: 60,
+				}
+			)
+		}
 
 		// There is no way to create a certifacte in one go. Instead we have to
 		// first create the without relying on the certifacte and then rerun
@@ -66,7 +71,7 @@ export class Application extends pulumi.ComponentResource {
 		this.containerAppId = args.containerAppIdOutputValue.apply(id => {
 			// pulumi to update the app to use the certifacte
 			let certificate: azure.app.ManagedCertificate | undefined = undefined;
-			if (id !== undefined) {
+			if (id !== undefined && args.domainPrefix !== undefined) {
 				certificate = new azure.app.ManagedCertificate(
 					`${args.domainPrefix}-certificate`,
 					{
@@ -78,7 +83,7 @@ export class Application extends pulumi.ComponentResource {
 							subjectName: domain,
 						}
 					},
-					{ dependsOn: [txtRecord, aRecord] },
+					{ dependsOn: txtRecord && aRecord && [txtRecord, aRecord] },
 				)
 			}
 
@@ -111,13 +116,13 @@ export class Application extends pulumi.ComponentResource {
 						ingress: {
 							external: true,
 							targetPort: args.containerPort,
-							customDomains: [
+							customDomains: domain !== undefined ? [
 								{
 									name: domain,
 									certificateId: certificate?.id,
 									bindingType: certificate !== undefined ? BindingType.SniEnabled : BindingType.Disabled,
 								}
-							]
+							] : undefined
 						},
 						secrets: [
 							{
@@ -137,11 +142,13 @@ export class Application extends pulumi.ComponentResource {
 						]
 					},
 				},
-				{ dependsOn: certificate !== undefined ? [certificate] : [txtRecord, aRecord] },
+				{ dependsOn: certificate !== undefined ? [certificate] : txtRecord && aRecord && [txtRecord, aRecord] },
 			)
-
+		
 			return containerApp.id
 		})
+			
+		this.domain = domain ?? "TODO - containerApp.something"
 
 		// TODO For now we are passing in the image tag for the image
 		// Not sure if thats the best way, if not we can go back to creating
