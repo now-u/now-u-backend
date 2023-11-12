@@ -1,7 +1,7 @@
 import requests
 import json
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # TODO Every campaign has a short name
@@ -224,6 +224,8 @@ for campaign in campaigns:
             campaign['id'] if campaign['id'] not in duplicate_campaign_map_ids else duplicate_campaign_map_ids[campaign['id']]
         )
 
+fallback_relased_at = (datetime.now() - timedelta(days = 20)).isoformat()
+
 output_fixtures.extend([
     {
         'model': 'causes.action',
@@ -236,6 +238,8 @@ output_fixtures.extend([
             'link': action['link'],
             'time': action['time'],
             'of_the_month': action['of_the_month'],
+            'release_at': action.get('release_date') or fallback_relased_at,
+            'end_at': action.get('end_date'),
             'suggested': action['recommended'],
             'created_at': datetime.now().isoformat(),
             'updated_at': datetime.now().isoformat(),
@@ -255,6 +259,8 @@ output_fixtures.extend([
             'time': resource['time'],
             'link': resource['link'],
             'learning_resource_type': learning_resource_type(resource['type']),
+            'release_at': resource.get('release_date') or fallback_relased_at,
+            'end_at': resource.get('end_date'),
             'source': resource['source'],
             'created_at': datetime.now().isoformat(),
             'updated_at': datetime.now().isoformat(),
@@ -275,6 +281,8 @@ output_fixtures.extend([
             'header_image': create_image(resource['header_image'], "campaign_header", resource['id']),
             'of_the_month': resource['of_the_month'],
             'suggested': resource['recommended'],
+            'release_at': resource.get('release_date') or fallback_relased_at,
+            'end_at': resource.get('end_date'),
 
             'actions': [
                 action['id'] if action['id'] not in duplicate_action_ids else duplicate_action_ids[action['id']]
@@ -300,6 +308,8 @@ output_fixtures.extend([
             'title': article['title'],
             'subtitle': article['subtitle'],
             'header_image': create_image(article['header_image'], "news_article_header", article['id']),
+            'release_at': article.get('release_date') or fallback_relased_at,
+            'end_at': article.get('end_date'),
             'link': article['full_article_link'],
             'source': article['source'] or 'TODO Source',
             'created_at': article['created_at'],
@@ -323,6 +333,8 @@ for organisation in organisations:
             'geographic_reach': organisation['geographic_reach'],
             'instagram_link': organisation['IG_link'],
             'facebook_link': organisation['FB_link'],
+            'release_at': organisation.get('release_date') or fallback_relased_at,
+            'end_at': organisation.get('end_date'),
             'twitter_link': organisation['twitter_link'],
             # TODO Parse
             'organisation_type': organisation_type(organisation['organisation_type']),
