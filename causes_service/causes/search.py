@@ -67,7 +67,7 @@ SEARCH_INDICIES = [
     ),
     ModelSearchIndex(
         index_name='news_articles',
-        searchable_attributes=['title', 'subtitle', 'source', 'release_at_timestamp'],
+        searchable_attributes=['title', 'subtitle', 'source', 'causes.id', 'release_at_timestamp'],
         filterable_attributes=[],
         model=NewsArticle,
         serializer=NewsArticleSerializer,

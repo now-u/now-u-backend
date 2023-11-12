@@ -80,6 +80,7 @@ class CampaignSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NewsArticleSerializer(serializers.ModelSerializer):
+    causes = CauseSerializer(many=True)
     header_image = ImageSerializer()
     release_at_timestamp = serializers.IntegerField()
 
