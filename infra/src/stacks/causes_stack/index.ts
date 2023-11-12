@@ -16,7 +16,7 @@ export async function causesStackFunction(baseStackOutput: BaseStackReference, s
 		"causes-service-database",
 		{
 			// TODO Add stack name
-			databaseName: "csDb",
+			databaseName: "causes",
 			baseStackOutput,
 		}
 	)
