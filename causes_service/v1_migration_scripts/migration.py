@@ -368,13 +368,16 @@ output_fixtures.extend([
 ])
 
 for (i, name) in enumerate(set(campaign['short_name'] for campaign in campaigns)):
+    theme_campaigns = [campaign for campaign in campaigns if campaign['short_name'] == name]
+    campaign_ids = [campaign['id'] if campaign['id'] not in duplicate_campaign_map_ids else duplicate_campaign_map_ids[campaign['id']] for campaign in theme_campaigns]
+
     output_fixtures.append(
         {
             'model': 'causes.theme',
             'pk': i,
             'fields': {
                 'title': name,
-                'campaigns': [campaign['id'] for campaign in campaigns if campaign['short_name'] == name]
+                'campaigns': list(set(campaign_ids)),
             }
         }
     )

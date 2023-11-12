@@ -88,7 +88,7 @@ class Cause(models.Model):
 class Theme(models.Model):
     title = models.CharField(max_length=64)
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
-    description = models.TextField()
+    description = models.TextField(null=True)
     campaigns = models.ManyToManyField('Campaign', related_name='themes', blank=True)
 
 class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
