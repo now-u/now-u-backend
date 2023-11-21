@@ -1,3 +1,4 @@
+from django.utils import timezone
 from typing import Any
 from django.contrib import admin
 from django import forms
@@ -21,6 +22,11 @@ def split_release_info(fieldsets):
             'fields': release_fields,
         }),
     )
+
+
+@admin.action(description="Set end date of the release to now (hide the resources)")
+def end_now_action(modeladmin, request, queryset):
+    queryset.update(end_at=timezone.now())
 
 class CauseAdminForm(forms.ModelForm):
     header_image = forms.ImageField(widget=AdminImageWidget)
@@ -53,6 +59,7 @@ class ActionAdmin(admin.ModelAdmin):
     # TODO Show causes on admin list
     filter_horizontal = ('causes',)
     inlines = [CauseInline]
+    actions = [end_now_action]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         raw_fieldsets = super().get_fieldsets(request, obj)
@@ -69,6 +76,7 @@ class CampaignAdmin(admin.ModelAdmin):
     filter_horizontal = ('actions', 'learning_resources')
     list_filter = ('causes',)
     inlines = [CauseInline]
+    actions = [end_now_action]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         fieldsets = super().get_fieldsets(request, obj)
@@ -82,14 +90,16 @@ class LearningResourceAdmin(admin.ModelAdmin):
     list_display = ('title', 'learning_resource_type', 'source', 'time', 'active', 'id')
     search_fields = ('title', 'source')
     list_filter = ('learning_resource_type', 'causes')
+    actions = [end_now_action]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         fieldsets = super().get_fieldsets(request, obj)
         return split_release_info(fieldsets)
 
 class NewsArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'source', 'id')
+    list_display = ('title', 'source', 'active', 'id')
     search_fields = ('title', 'source')
+    actions = [end_now_action]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         fieldsets = super().get_fieldsets(request, obj)
@@ -102,6 +112,7 @@ class OrganisationExtraLinkInline(admin.TabularInline):
 class OrganisationAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'active')
     inlines = [OrganisationExtraLinkInline]
+    actions = [end_now_action]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         raw_fieldsets = super().get_fieldsets(request, obj)
