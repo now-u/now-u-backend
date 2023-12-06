@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from dotenv import load_dotenv
 from pathlib import Path
+import sentry_sdk
 import os
 
 load_dotenv()
@@ -23,9 +24,19 @@ def get_required_env(name: str) -> str:
         raise Exception(f"{name} is not set")
     return value
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+sentry_sdk.init(
+    dsn="https://8e0da4fb2583f5ed5dbe5260f61362ab@o1209445.ingest.sentry.io/4506350920925184",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0 if DEBUG else 0.1,
+)
 
 BASE_URL = os.getenv('BASE_URL', 'http://192.168.1.11:8000')
 

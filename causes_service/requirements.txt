@@ -22,6 +22,8 @@ django-admin-interface==0.26.0
 
 django-cors-headers==4.2.0
 
+sentry-sdk[django]==1.38.0
+
 
 ## dev deps TODO move
 
