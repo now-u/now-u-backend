@@ -55,6 +55,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-=2ni(vbte78nlvoip2+*pydk8(+z4ewov&8ns9+$6%5*b%dqhe'
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [BASE_URL]
