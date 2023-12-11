@@ -43,8 +43,8 @@ class CauseAdmin(admin.ModelAdmin):
     form = CauseAdminForm
 
 class ThemeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'id')
-    search_fields = ('title', 'description')
+    list_display = ('title', 'id')
+    search_fields = ('title',)
     filter_horizontal = ('campaigns',)
 
 # TODO Allow search by topic

@@ -88,7 +88,6 @@ class Cause(models.Model):
 class Theme(models.Model):
     title = models.CharField(max_length=64)
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
-    description = models.TextField(null=True)
     campaigns = models.ManyToManyField('Campaign', related_name='themes', blank=True)
 
 class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
@@ -178,8 +177,8 @@ class Campaign(ReleaseControlMixin, TimestampMixin, models.Model):
     of_the_month = models.BooleanField(default=False)
     suggested = models.BooleanField(default=False)
 
-    actions = models.ManyToManyField('Action', related_name='campaigns')
-    learning_resources = models.ManyToManyField('LearningResource', related_name='campaigns')
+    actions = models.ManyToManyField('Action', related_name='campaigns', blank=True)
+    learning_resources = models.ManyToManyField('LearningResource', related_name='campaigns', blank=True)
 
     def _mark_complete(self, user_id: str, is_complete: bool):
         """
