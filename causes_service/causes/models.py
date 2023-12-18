@@ -225,6 +225,11 @@ class NewsArticle(ReleaseControlMixin, TimestampMixin, models.Model):
     source = models.CharField(max_length=300)
     link = models.URLField(max_length=500)
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    published_at = models.DateTimeField(help_text=_('The date when this resource was published by the source. The app will show news in published order by default.'))
+
+    @property
+    def published_at_timestamp(self) -> int:
+        return math.floor(time.mktime(self.published_at.timetuple()))
 
     def __str__(self) -> str:
         return self.title
