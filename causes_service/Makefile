@@ -16,6 +16,9 @@ migrate:
 migrations:
 	./manage.py makemigrations
 
+format:
+	ruff --fix .
+
 generateschema:
 	./manage.py generateschema --file openapi-schema.yml
 

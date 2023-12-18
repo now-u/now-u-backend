@@ -1,9 +1,7 @@
 from django.utils import timezone
 from typing import Any
 from django.contrib import admin
-from django import forms
 from django.http.request import HttpRequest
-from images.admin import AdminImageWidget
 
 from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation, OrganisationExtraLink, Theme
 
@@ -28,19 +26,19 @@ def split_release_info(fieldsets):
 def end_now_action(modeladmin, request, queryset):
     queryset.update(end_at=timezone.now())
 
-class CauseAdminForm(forms.ModelForm):
-    header_image = forms.ImageField(widget=AdminImageWidget)
-
-    class Meta:
-        model = Cause
-        fields = '__all__'
+# class CauseAdminForm(forms.ModelForm):
+#     # TODO Add image preview
+#     # header_image = forms.ImageField(widget=AdminImageWidget)
+#     class Meta:
+#         model = Cause
+#         fields = '__all__'
 
 class CauseAdmin(admin.ModelAdmin):
-    readonly_fields = ['header_image_preview']
+    # readonly_fields = ['header_image_preview']
     list_display = ('title', 'id')
     search_fields = ('title', 'description')
     filter_horizontal = ('themes', 'actions', 'learning_resources', 'campaigns', 'news_articles')
-    form = CauseAdminForm
+    # form = CauseAdminForm
 
 class ThemeAdmin(admin.ModelAdmin):
     list_display = ('title', 'id')
