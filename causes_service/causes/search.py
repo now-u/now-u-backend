@@ -14,6 +14,7 @@ class ModelSearchIndex:
     index_name: str
     searchable_attributes: list[str]
     filterable_attributes: list[str]
+    sortable_attributes: list[str]
     model: ModelBase
     serializer: SerializerMetaclass
     # TODO Make sure the queryset matches the type of the model
@@ -32,6 +33,7 @@ class ModelSearchIndex:
             'displayedAttributes': ['*'],
             'searchableAttributes': self.searchable_attributes,
             'filterableAttributes': self.filterable_attributes,
+            'sortableAttributes': self.sortable_attributes,
         })
 
     def delete_search_index(self, client: meilisearch.Client):
@@ -45,6 +47,7 @@ SEARCH_INDICIES = [
         index_name='learning_resources',
         searchable_attributes=['title', 'source'],
         filterable_attributes=['id', 'time', 'source', 'causes.id', 'release_at_timestamp', 'suggested', 'of_the_month'],
+        sortable_attributes=['release_at_timestamp'],
         model=LearningResource,
         serializer=LearningResourceSerializer,
         queryset=LearningResource.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
@@ -53,6 +56,7 @@ SEARCH_INDICIES = [
         index_name='actions',
         searchable_attributes=['title', 'what_description', 'why_description'],
         filterable_attributes=['id', 'time', 'of_the_month', 'suggested', 'action_type', 'causes.id', 'release_at_timestamp'],
+        sortable_attributes=['release_at_timestamp'],
         model=Action,
         serializer=ListActionSerializer,
         queryset=Action.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
@@ -61,14 +65,16 @@ SEARCH_INDICIES = [
         index_name='campaigns',
         searchable_attributes=['title', 'short_name', 'description'],
         filterable_attributes=['id', 'of_the_month', 'suggested', 'causes.id', 'release_at_timestamp'],
+        sortable_attributes=['release_at_timestamp'],
         model=Campaign,
         serializer=ListCampaignSerializer,
         queryset=Campaign.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='news_articles',
-        searchable_attributes=['title', 'subtitle', 'source', 'causes.id', 'release_at_timestamp', 'published_at_timestamp'],
-        filterable_attributes=[],
+        searchable_attributes=['title', 'subtitle', 'source',],
+        filterable_attributes=['id', 'causes.id', 'release_at_timestamp', 'published_at_timestamp'],
+        sortable_attributes=['release_at_timestamp', 'published_at_timestamp'],
         model=NewsArticle,
         serializer=NewsArticleSerializer,
         queryset=NewsArticle.objects.filter_active(is_active_at=datetime.now())
