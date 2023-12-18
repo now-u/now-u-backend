@@ -70,7 +70,7 @@ class Cause(models.Model):
     actions = models.ManyToManyField('Action', related_name='causes', blank=True)
     learning_resources = models.ManyToManyField('LearningResource', related_name='causes', blank=True)
     campaigns = models.ManyToManyField('Campaign', related_name='causes', blank=True)
-    news_articles = models.ManyToManyField('NewsArticle', related_name='new_articles', blank=True)
+    news_articles = models.ManyToManyField('NewsArticle', related_name='causes', blank=True)
 
     def header_image_preview(self):
         return self.header_image.image_preview()
