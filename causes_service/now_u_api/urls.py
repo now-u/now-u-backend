@@ -27,18 +27,19 @@ from rest_framework import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 router = routers.DefaultRouter()
-router.register(r'actions', causeViews.ActionViewSet)
+router.register(r'actions', causeViews.ActionViewSet, basename='action')
 router.register(r'causes', causeViews.CauseViewSet)
-router.register(r'learning_resources', causeViews.LearningResourceViewSet)
-router.register(r'campaigns', causeViews.CampaignViewSet)
-router.register(r'organisations', causeViews.OrganisationViewSet)
-router.register(r'new_articles', causeViews.NewsArticleViewSet)
+router.register(r'learning_resources', causeViews.LearningResourceViewSet, basename="learning_resources")
+router.register(r'campaigns', causeViews.CampaignViewSet, basename="campaigns")
+router.register(r'organisations', causeViews.OrganisationViewSet, basename="organisations")
+router.register(r'new_articles', causeViews.NewsArticleViewSet, basename="new_articles")
 router.register(r'faqs', faqViews.FaqViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path(r'me/profile/', userViews.UserProfileView.as_view()),
+    path(r'me/delete/', userViews.DeleteUserView.as_view()),
     path(r'me/causesInfo/', userViews.CausesUserView.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),

@@ -4,8 +4,11 @@ from django.utils.safestring import mark_safe
 
 from images.models import Image
 
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'internal_name', 'alt_text',)
+    search_fields = ('internal_name', 'alt_text',)
 
-admin.site.register(Image)
+admin.site.register(Image, ImageAdmin)
 
 class AdminImageWidget(AdminFileWidget):
     def render(self, name, value, attrs=None, **kwargs):

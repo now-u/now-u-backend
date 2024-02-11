@@ -3,6 +3,7 @@ import time
 import math
 from django.db import models
 from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -17,14 +18,21 @@ class TimestampMixin(models.Model):
     class Meta:
         abstract = True
 
+def filter_active_for_releaseable_queryset(
+    queryset: models.QuerySet | models.Manager,
+    is_active_at: datetime,
+    is_active=True,
+):
+    release_query = Q(release_at=None) | Q(release_at__lte=is_active_at)
+    end_query = Q(end_at=None) | Q(end_at__gte=is_active_at)
+    active_query = release_query & end_query
+    if not is_active:
+        active_query = ~active_query
+    return queryset.filter(active_query)
+
 class ReleaseControlManager(models.Manager):
     def filter_active(self, is_active_at: datetime, is_active=True):
-        release_query = Q(release_at=None) | Q(release_at__lte=is_active_at)
-        end_query = Q(end_at=None) | Q(end_at__gte=is_active_at)
-        active_query = release_query & end_query
-        if not is_active:
-            active_query = ~active_query
-        return self.filter(active_query)
+        filter_active_for_releaseable_queryset(self, is_active_at, is_active)
 
 class ReleaseControlMixin(TimeStampedMixin, models.Model):
     release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'))
