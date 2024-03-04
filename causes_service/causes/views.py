@@ -48,7 +48,6 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'ok'})
 
 class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = LearningResource.objects.filter_active(is_active_at=datetime.now())
     serializer_class = LearningResourceSerializer
 
     def get_queryset(self) -> QuerySet[Any]:
@@ -57,18 +56,19 @@ class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Try and fix these types
         if (user is not None and user.is_staff):
             return LearningResource.objects.all()
-        return super().get_queryset()
+        return LearningResource.objects.filter_active(is_active_at=datetime.now())
 
     @extend_schema(operation_id="learning_resources_complete", request=None, responses=None)
     @action(detail=True, methods=['post'])
     def complete(self, request, pk=None) -> Response:
         # TODO Handle duplicates
-        learningResource: LearningResource = self.get_object()
-        learningResource.complete(request.user.id)
+        learning_resource: LearningResource = self.get_object()
+        learning_resource.complete(request.user.id)
         return Response({'status': 'ok'})
 
 class CampaignViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Campaign.objects.filter_active(is_active_at=datetime.now())
+    def get_queryset(self) -> QuerySet[Campaign]:
+        return Campaign.objects.filter_active(is_active_at=datetime.now())
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -76,8 +76,18 @@ class CampaignViewSet(viewsets.ReadOnlyModelViewSet):
         return CampaignSerializer
 
 class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = NewsArticle.objects.filter_active(is_active_at=datetime.now())
     serializer_class = NewsArticleSerializer
+
+    def get_queryset(self) -> QuerySet[NewsArticle]:
+        return NewsArticle.objects.filter_active(is_active_at=datetime.now())
+
+    @extend_schema(operation_id="news_article_complete", request=None, responses=None)
+    @action(detail=True, methods=['post'])
+    def complete(self, request, pk=None) -> Response:
+        # TODO Handle duplicates
+        news_article: NewsArticle = self.get_object()
+        news_article.complete(request.user.id)
+        return Response({'status': 'ok'})
 
 class OrganisationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Organisation.objects.all()

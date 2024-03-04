@@ -31,6 +31,13 @@ class ListActionSerializer(serializers.ModelSerializer):
 class LearningResourceSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
     release_at_timestamp = serializers.IntegerField()
+    is_completed = serializers.SerializerMethodField()
+
+    def get_is_completed(self, obj: Action) -> bool:
+        user = get_user_from_context(self.context)
+        if user is None:
+            return False
+        return obj.is_completed(user.pk)
 
     class Meta:
         model = LearningResource
@@ -83,6 +90,13 @@ class NewsArticleSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
     header_image = ImageSerializer()
     release_at_timestamp = serializers.IntegerField()
+    is_completed = serializers.SerializerMethodField()
+
+    def get_is_completed(self, obj: NewsArticle) -> bool:
+        user = get_user_from_context(self.context)
+        if user is None:
+            return False
+        return obj.is_completed(user.pk)
 
     class Meta:
         model = NewsArticle

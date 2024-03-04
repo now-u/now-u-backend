@@ -32,14 +32,15 @@ router.register(r'causes', causeViews.CauseViewSet)
 router.register(r'learning_resources', causeViews.LearningResourceViewSet, basename="learning_resources")
 router.register(r'campaigns', causeViews.CampaignViewSet, basename="campaigns")
 router.register(r'organisations', causeViews.OrganisationViewSet, basename="organisations")
+# TODO Deprecate this
 router.register(r'new_articles', causeViews.NewsArticleViewSet, basename="new_articles")
+router.register(r'news_articles', causeViews.NewsArticleViewSet, basename="news_articles")
 router.register(r'faqs', faqViews.FaqViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path(r'me/profile/', userViews.UserProfileView.as_view()),
-    path(r'me/delete/', userViews.DeleteUserView.as_view()),
     path(r'me/causesInfo/', userViews.CausesUserView.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),

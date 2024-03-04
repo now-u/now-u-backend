@@ -20,6 +20,7 @@ class CausesUserSerializer(serializers.ModelSerializer):
     completed_action_ids = serializers.SerializerMethodField()
     completed_learning_resource_ids = serializers.SerializerMethodField()
     completed_campaign_ids = serializers.SerializerMethodField()
+    completed_news_article_ids = serializers.SerializerMethodField()
 
     def get_completed_action_ids(self, obj: User) -> list[int]:
         return obj.completed_actions.all().values_list("action__pk", flat=True)
@@ -30,7 +31,10 @@ class CausesUserSerializer(serializers.ModelSerializer):
     def get_completed_campaign_ids(self, obj: User) -> list[int]:
         return obj.completed_campaigns.all().values_list("campaign__pk", flat=True)
 
+    def get_completed_news_article_ids(self, obj: User) -> list[int]:
+        return obj.completed_news_articles.all().values_list("news_article__pk", flat=True)
+
     class Meta:
         model = User
-        fields = ['id', 'completed_learning_resource_ids', 'completed_action_ids', 'selected_causes_ids', 'completed_campaign_ids']
+        fields = ['id', 'completed_learning_resource_ids', 'completed_action_ids', 'selected_causes_ids', 'completed_campaign_ids', 'completed_news_article_ids']
 

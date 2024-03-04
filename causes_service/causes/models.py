@@ -3,7 +3,6 @@ import time
 import math
 from django.db import models
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -32,7 +31,7 @@ def filter_active_for_releaseable_queryset(
 
 class ReleaseControlManager(models.Manager):
     def filter_active(self, is_active_at: datetime, is_active=True):
-        filter_active_for_releaseable_queryset(self, is_active_at, is_active)
+        return filter_active_for_releaseable_queryset(self, is_active_at, is_active)
 
 class ReleaseControlMixin(TimeStampedMixin, models.Model):
     release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'))
@@ -222,7 +221,7 @@ class Campaign(ReleaseControlMixin, TimestampMixin, models.Model):
         return is_complete
 
     def cached_is_complete(self, user_id: str) -> bool:
-        return UserCampaign.objects.filter(user_id=user_id, campaign=self).exists() 
+        return UserCampaign.objects.filter(user_id=user_id, campaign=self).exists()
 
     def __str__(self) -> str:
         return self.title
@@ -238,6 +237,16 @@ class NewsArticle(ReleaseControlMixin, TimestampMixin, models.Model):
     @property
     def published_at_timestamp(self) -> int:
         return math.floor(time.mktime(self.published_at.timetuple()))
+
+    def is_completed(self, user_id: str) -> bool:
+        return UserNewsArticle.objects.filter(user_id=user_id, news_article=self).exists()
+
+    def complete(self, user_id: str):
+        # TODO Prevent duplicate completion all over the replace!
+        UserNewsArticle.objects.create(user_id=user_id, news_article=self)
+
+    def uncomplete(self, user_id: str):
+        UserAction.objects.filter(user_id=user_id, news_article=self).delete()
 
     def __str__(self) -> str:
         return self.title
@@ -272,6 +281,10 @@ class UserAction(TimestampMixin, models.Model):
 class UserLearningResources(TimestampMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_learning_resources')
     learning_resource = models.ForeignKey(LearningResource, on_delete=models.CASCADE)
+
+class UserNewsArticle(TimestampMixin, models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_news_articles')
+    news_article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
 
 class UserCampaign(TimestampMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_campaigns')

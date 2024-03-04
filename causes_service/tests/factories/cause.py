@@ -3,7 +3,7 @@ from typing import Generic, TypeVar
 import factory
 import factory.fuzzy
 
-from causes.models import Cause, Action, LearningResource, Campaign
+from causes.models import Cause, Action, LearningResource, Campaign, NewsArticle
 from images.models import Image
 
 T = TypeVar('T')
@@ -53,6 +53,18 @@ class LearningResourceFactory(factory.django.DjangoModelFactory):
     link = factory.Faker("url")
     learning_resource_type = factory.fuzzy.FuzzyChoice(LearningResource.Type.values)
     source = factory.Faker("sentence")
+    release_at = factory.Faker("past_datetime")
+
+class NewsArticleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = NewsArticle
+
+    title = factory.Faker("sentence")
+    subtitle = factory.Faker("sentence")
+    source = factory.Faker("sentence")
+    link = factory.Faker("url")
+    header_image = factory.SubFactory(ImageFactory)
+    published_at = factory.Faker("past_datetime")
     release_at = factory.Faker("past_datetime")
 
 class CampaignFactory(factory.django.DjangoModelFactory, metaclass=BaseMetaFactory[Campaign]):

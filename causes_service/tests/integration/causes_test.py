@@ -1,6 +1,6 @@
 import pytest
 
-from tests.factories.cause import CauseFactory, CampaignFactory, ActionFactory, LearningResourceFactory
+from tests.factories.cause import CauseFactory, CampaignFactory, ActionFactory, LearningResourceFactory, NewsArticleFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -17,6 +17,36 @@ def test_get_cause(client):
     assert response.status_code == 200
     assert response.data['id'] == cause.pk
     assert response.data['title'] == cause.title
+
+def test_complete_learning_resource(auth_client):
+    learning_resources = LearningResourceFactory.create()
+
+    response = auth_client.post(f'/learning_resources/{learning_resources.pk}/complete/')
+    assert response.status_code == 200
+
+    response = auth_client.get(f'/learning_resources/{learning_resources.pk}/')
+    assert response.data['is_completed'] is True
+
+def test_complete_action(auth_client):
+    action = ActionFactory.create()
+
+    response = auth_client.post(f'/actions/{action.pk}/complete/')
+    assert response.status_code == 200
+
+    response = auth_client.get(f'/actions/{action.pk}/')
+    assert response.data['is_completed'] is True
+
+def test_complete_news_article(auth_client):
+    article = NewsArticleFactory.create()
+
+    response = auth_client.get(f'/news_articles/{article.pk}/')
+    assert response.data['is_completed'] is False
+
+    response = auth_client.post(f'/news_articles/{article.pk}/complete/')
+    assert response.status_code == 200
+
+    response = auth_client.get(f'/news_articles/{article.pk}/')
+    assert response.data['is_completed'] is True
 
 def test_complete_campaign(auth_client):
 
