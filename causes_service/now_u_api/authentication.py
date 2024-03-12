@@ -12,6 +12,8 @@ class NowuTokenAuthentication(TokenAuthentication):
             payload = jwt.decode(key, JWT_SECRET, algorithms=["HS256"], audience='authenticated')
         except jwt.DecodeError:
             raise AuthenticationFailed('Authentication Failed: Invalid token')
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Authentication Failed: Token signature expired')
 
         # TODO In the future if we support changing email address, we should
         # check if a user with this id already exists (rather than relying on email)
