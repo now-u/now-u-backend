@@ -68,6 +68,7 @@ class ThemeAdmin(admin.ModelAdmin):
 class ActionAdmin(admin.ModelAdmin):
     class CauseInline(admin.TabularInline):
         model = Cause.actions.through
+        min_num = 1
         extra = 0
 
     list_display = ('title', 'action_type', 'time', 'active', 'id')
@@ -86,6 +87,7 @@ class ActionAdmin(admin.ModelAdmin):
 class CampaignAdmin(admin.ModelAdmin):
     class CauseInline(admin.TabularInline):
         model = Cause.campaigns.through
+        min_num = 1
         extra = 0
 
     list_display = ('title', 'short_name', 'active', 'id')
@@ -102,12 +104,14 @@ class CampaignAdmin(admin.ModelAdmin):
 class LearningResourceAdmin(admin.ModelAdmin):
     class CauseInline(admin.TabularInline):
         model = Cause.learning_resources.through
+        min_num = 1
         extra = 0
 
     list_display = ('title', 'learning_resource_type', 'source', 'time', 'active', 'id')
     search_fields = ('title', 'source')
     list_filter = ('learning_resource_type', 'causes', ActiveListFilter)
     actions = [end_now_action]
+    inlines = [CauseInline]
 
     def get_fieldsets(self, request: HttpRequest, obj: Any | None = ...):
         fieldsets = super().get_fieldsets(request, obj)
@@ -116,6 +120,7 @@ class LearningResourceAdmin(admin.ModelAdmin):
 class NewsArticleAdmin(admin.ModelAdmin):
     class CauseInline(admin.TabularInline):
         model = Cause.news_articles.through
+        min_num = 1
         extra = 0
 
     list_display = ('title', 'source', 'active', 'id')
