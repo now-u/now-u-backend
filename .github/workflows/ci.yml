@@ -36,6 +36,7 @@ jobs:
           registry-url: ${{ secrets.REGISTRY_URL }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy causes infra
         run: infra-cli deploy --causes-image-tag ${{ steps.build-causes.outputs.causes-image-tag }}
