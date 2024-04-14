@@ -23,8 +23,8 @@ def get_required_env(name: str) -> str:
     if value is None:
         raise Exception(f"{name} is not set")
     return value
-    
-DEBUG = os.getenv('DEBUG', 'false') == 'true')
+
+DEBUG = os.getenv('DEBUG', None) == 'true'
 
 sentry_sdk.init(
     dsn="https://8e0da4fb2583f5ed5dbe5260f61362ab@o1209445.ingest.sentry.io/4506350920925184",
