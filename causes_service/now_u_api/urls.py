@@ -41,6 +41,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path(r'me/profile/', userViews.UserProfileView.as_view()),
+    path(r'me/delete/', userViews.DeleteUserView.as_view()),
     path(r'me/causesInfo/', userViews.CausesUserView.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),

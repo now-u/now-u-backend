@@ -19,5 +19,9 @@ def test_update_me(auth_client):
     assert auth_client.user.name != new_name
     response = auth_client.patch('/me/profile/', { 'name': new_name })
     assert response.status_code == 200
-    print(response.data)
     assert response.data['name'] == new_name
+
+# TODO Create user and delete in test/mock supabase
+# def test_delete_me(auth_client):
+#     response = auth_client.delete('/me/delete/')
+#     assert response.status_code == 200

@@ -3,6 +3,11 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
 from users.mailing_list import subscribe_to_mailing_list, unsubscribe_from_mailing_list
+from utils.supabase import get_supabase_client
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -51,18 +56,25 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     objects = UserManager()
 
+    class UserStatus(models.TextChoices):
+        ACTIVE = "ACTIVE"
+        DELETED = "DELETED"
+
     # TODO Remove username
-    username = models.CharField(_('username'), max_length=254)
-    email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(_('username'), max_length=254, null=True, blank=True)
+    email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
     auth_id = models.CharField(_('auth_id'), max_length=254, unique=True, null=True, blank=True)
     name = models.CharField(_("name"), max_length=150, blank=True)
     selected_causes = models.ManyToManyField('causes.Cause', through='causes.UserCause')
+    status = models.CharField(choices=UserStatus.choices, max_length=10, default=UserStatus.ACTIVE)
 
     first_name = None
     last_name = None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    # TODO Add validation to make sure email is no null if active
 
     def set_selected_causes(self, cause_ids: list[int]):
         from causes.models import UserCause
@@ -78,3 +90,29 @@ class User(AbstractUser):
 
     def unsubscribe_from_mailing_list(self):
         unsubscribe_from_mailing_list(self.email)
+
+    def delete(self):
+        """Remove identifiying information of user and mark as deleted.
+
+        A user record should not be fully deleted as this breaks relationships for other models such as action completion. These relations are useful for aggreate statistics. Instead when a user requests to delete their account any identifiying data should be removed.
+        """
+        logger.info(f"Deleting user id={self.pk}")
+
+        if self.status == User.UserStatus.DELETED:
+            raise Exception("User already deleted")
+
+        if self.auth_id is None:
+            raise Exception("Cannot delete user with no auth_id")
+
+        logger.info(f"Deleting user from supabase auth_id={self.auth_id}")
+        supabase = get_supabase_client()
+        # TODO Handle errors
+        response = supabase.auth.admin.delete_user(self.auth_id)
+        logger.info(response)
+
+        logger.info("Soft deleting user from user service")
+        self.username = None
+        self.email = None
+        self.auth_id = None
+        self.status = User.UserStatus.DELETED
+        self.save()

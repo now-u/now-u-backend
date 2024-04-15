@@ -10,3 +10,4 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     email = factory.Faker("email")
     name = factory.Faker("name")
+    auth_id = factory.Faker("uuid4")

@@ -301,3 +301,7 @@ MAILCHIMP = {
 class MEILISEARCH:
     URL = get_required_env('MEILISEARCH_URL')
     MASTER_KEY = get_required_env('MEILISEARCH_MASTER_KEY')
+
+class SUPABASE:
+    URL = get_required_env('SUPABASE_URL')
+    KEY = get_required_env('SUPABASE_KEY')

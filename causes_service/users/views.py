@@ -20,3 +20,9 @@ class CausesUserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+class DeleteUserView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
