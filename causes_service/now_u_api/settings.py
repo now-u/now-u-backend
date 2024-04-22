@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
+
 from pathlib import Path
 import sentry_sdk
 import os
@@ -121,6 +123,10 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^http:\/\/localhost:*([0-9]+)?$",
     r"^https://\w+\.now-u\.com$",
 ]
+CORS_ALLOW_HEADERS = (
+    *default_headers,
+    "Authorization",
+)
 
 
 STATIC_FILES_STORAGE_CONTAINER = os.getenv("STATIC_FILES_STORAGE_CONTAINER")
