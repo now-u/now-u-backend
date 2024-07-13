@@ -99,6 +99,32 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": "application.log",
+            "formatter": "verbose",
+            "maxBytes": 10485760, # 10 MB
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console", "file"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "INFO"),
+        }
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{asctime} ({levelname})- {name}- {message}",
+            "style": "{",
+        }
+    },
+}
+
 ROOT_URLCONF = 'now_u_api.urls'
 
 TEMPLATES = [
