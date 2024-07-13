@@ -89,6 +89,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'log_request_id.middleware.RequestIDMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -102,10 +103,20 @@ MIDDLEWARE = [
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
+    "filters": {
+        "request_id": {
+            "()": "log_request_id.filters.RequestIDFilter"
+        }
+    },
     "handlers": {
-        "console": {"class": "logging.StreamHandler"},
+        "console": {
+            "class": "logging.StreamHandler",
+            "filters": ["request_id"],
+            "formatter": "verbose",
+        },
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
+            "filters": ["request_id"],
             "filename": "application.log",
             "formatter": "verbose",
             "maxBytes": 10485760, # 10 MB
@@ -119,11 +130,14 @@ LOGGING = {
     },
     "formatters": {
         "verbose": {
-            "format": "{asctime} ({levelname})- {name}- {message}",
+            "format": "{asctime} {request_id} ({levelname})- {name}- {message}",
             "style": "{",
         }
     },
 }
+
+GENERATE_REQUEST_ID_IF_NOT_IN_HEADER = True
+REQUEST_ID_RESPONSE_HEADER = "REQUEST_ID"
 
 ROOT_URLCONF = 'now_u_api.urls'
 

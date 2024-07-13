@@ -10,6 +10,8 @@ meilisearch==0.28.0
 mailchimp-marketing==3.0.80
 supabase==2.4.1
 
+django-log-request-id==2.1.0
+
 ## Openapi generator (probably dev/build dep)
 pyyaml
 uritemplate
