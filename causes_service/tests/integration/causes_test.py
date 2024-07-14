@@ -21,20 +21,46 @@ def test_get_cause(client):
 def test_complete_learning_resource(auth_client):
     learning_resources = LearningResourceFactory.create()
 
+    response = auth_client.get(f'/learning_resources/{learning_resources.pk}/')
+    assert response.data['is_completed'] is False
+
     response = auth_client.post(f'/learning_resources/{learning_resources.pk}/complete/')
     assert response.status_code == 200
 
     response = auth_client.get(f'/learning_resources/{learning_resources.pk}/')
     assert response.data['is_completed'] is True
 
+def test_complete_learning_resource_fails_if_not_authenticated(auth_client):
+    auth_client.logout()
+    learning_resources = LearningResourceFactory.create()
+
+    response = auth_client.post(f'/learning_resources/{learning_resources.pk}/complete/')
+    assert response.status_code == 401
+
+    response = auth_client.get(f'/learning_resources/{learning_resources.pk}/')
+    assert response.data['is_completed'] is False
+
 def test_complete_action(auth_client):
     action = ActionFactory.create()
+
+    response = auth_client.get(f'/actions/{action.pk}/')
+    assert response.data['is_completed'] is False
 
     response = auth_client.post(f'/actions/{action.pk}/complete/')
     assert response.status_code == 200
 
     response = auth_client.get(f'/actions/{action.pk}/')
     assert response.data['is_completed'] is True
+
+def test_complete_action_fails_if_not_authenticated(auth_client):
+    auth_client.logout()
+    action = ActionFactory.create()
+
+    response = auth_client.post(f'/actions/{action.pk}/complete/')
+    assert response.status_code == 401
+
+    response = auth_client.get(f'/actions/{action.pk}/')
+    assert response.data['is_completed'] is False
 
 def test_complete_news_article(auth_client):
     article = NewsArticleFactory.create()
@@ -47,6 +73,19 @@ def test_complete_news_article(auth_client):
 
     response = auth_client.get(f'/news_articles/{article.pk}/')
     assert response.data['is_completed'] is True
+
+def test_complete_news_article_fails_if_not_authenticated(auth_client):
+    auth_client.logout()
+    article = NewsArticleFactory.create()
+
+    response = auth_client.get(f'/news_articles/{article.pk}/')
+    assert response.data['is_completed'] is False
+
+    response = auth_client.post(f'/news_articles/{article.pk}/complete/')
+    assert response.status_code == 401
+
+    response = auth_client.get(f'/news_articles/{article.pk}/')
+    assert response.data['is_completed'] is False
 
 def test_complete_campaign(auth_client):
 

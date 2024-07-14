@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
 from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation
@@ -33,7 +34,7 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
 
     # TODO Handle correct response rather than just None
     @extend_schema(operation_id="actions_complete", request=None, responses=None)
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def complete(self, request, pk=None) -> Response:
         action: Action = self.get_object()
         action.complete(request.user.id)
@@ -41,7 +42,7 @@ class ActionViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'ok'})
 
     @extend_schema(operation_id="actions_uncomplete", request=None, responses=None)
-    @action(detail=True, methods=['delete'])
+    @action(detail=True, methods=['delete'], permission_classes=[IsAuthenticated])
     def uncomplete(self, request, pk=None) -> Response:
         action: Action = self.get_object()
         action.uncomplete(request.user.id)
@@ -59,7 +60,7 @@ class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
         return LearningResource.objects.filter_active(is_active_at=datetime.now())
 
     @extend_schema(operation_id="learning_resources_complete", request=None, responses=None)
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def complete(self, request, pk=None) -> Response:
         # TODO Handle duplicates
         learning_resource: LearningResource = self.get_object()
@@ -82,7 +83,7 @@ class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
         return NewsArticle.objects.filter_active(is_active_at=datetime.now())
 
     @extend_schema(operation_id="news_article_complete", request=None, responses=None)
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def complete(self, request, pk=None) -> Response:
         # TODO Handle duplicates
         news_article: NewsArticle = self.get_object()
