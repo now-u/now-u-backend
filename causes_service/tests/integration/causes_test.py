@@ -1,6 +1,7 @@
 import pytest
 
 from tests.factories.cause import CauseFactory, CampaignFactory, ActionFactory, LearningResourceFactory, NewsArticleFactory
+from causes.models import Campaign, Action, LearningResource
 
 pytestmark = pytest.mark.django_db
 
@@ -121,3 +122,22 @@ def test_complete_campaign(auth_client):
 
     # Is complete after recompleting that action
     assert get_campaign_is_complete() is True
+
+def test_delete_campaign():
+    learning_resources = LearningResourceFactory.create_batch(2)
+    actions = ActionFactory.create_batch(2)
+
+    ActionFactory.create_batch(1)
+    LearningResourceFactory.create_batch(1)
+
+    campaign = CampaignFactory(learning_resources=learning_resources, actions=actions)
+
+    assert Campaign.objects.count() == 1
+    assert Action.objects.count() == 3
+    assert LearningResource.objects.count() == 3
+
+    campaign.delete()
+
+    assert Campaign.objects.count() == 0
+    assert Action.objects.count() == 3
+    assert LearningResource.objects.count() == 3

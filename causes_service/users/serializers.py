@@ -5,9 +5,9 @@ from users.models import User
 from causes.models import Cause
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(min_length=1, max_length=150)
+
     def update(self, instance, validated_data: Any):
-        print("Updating...")
-        print(validated_data)
         return super().update(instance, validated_data)
 
     class Meta:

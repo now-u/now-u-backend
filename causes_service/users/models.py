@@ -64,7 +64,7 @@ class User(AbstractUser):
     username = models.CharField(_('username'), max_length=254, null=True, blank=True)
     email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
     auth_id = models.CharField(_('auth_id'), max_length=254, unique=True, null=True, blank=True)
-    name = models.CharField(_("name"), max_length=150, blank=True)
+    name = models.CharField(_("name"), max_length=150, blank=True, null=True)
     selected_causes = models.ManyToManyField('causes.Cause', through='causes.UserCause')
     status = models.CharField(choices=UserStatus.choices, max_length=10, default=UserStatus.ACTIVE)
 
@@ -112,6 +112,7 @@ class User(AbstractUser):
 
         logger.info("Soft deleting user from user service")
         self.username = None
+        self.name = None
         self.email = None
         self.auth_id = None
         self.status = User.UserStatus.DELETED
