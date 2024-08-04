@@ -90,6 +90,7 @@ class NewsArticleSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
     header_image = ImageSerializer()
     release_at_timestamp = serializers.IntegerField()
+    published_at_timestamp = serializers.IntegerField()
     is_completed = serializers.SerializerMethodField()
 
     def get_is_completed(self, obj: NewsArticle) -> bool:

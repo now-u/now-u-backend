@@ -1,6 +1,4 @@
 from datetime import datetime
-import time
-import math
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -9,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from users.models import User
 from images.models import Image
 from utils.models import TimeStampedMixin
+from utils.timestamp import datetimeToTimestamp
 
 class TimestampMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -54,7 +53,7 @@ class ReleaseControlMixin(TimeStampedMixin, models.Model):
 
     @property
     def release_at_timestamp(self) -> int:
-        return math.floor(time.mktime(self.release_at.timetuple()))
+        return datetimeToTimestamp(self.release_at)
 
     class Meta:
         abstract = True
@@ -236,7 +235,7 @@ class NewsArticle(ReleaseControlMixin, TimestampMixin, models.Model):
 
     @property
     def published_at_timestamp(self) -> int:
-        return math.floor(time.mktime(self.published_at.timetuple()))
+        return datetimeToTimestamp(self.published_at)
 
     def is_completed(self, user_id: str) -> bool:
         return UserNewsArticle.objects.filter(user_id=user_id, news_article=self).exists()

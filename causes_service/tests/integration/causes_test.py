@@ -1,4 +1,6 @@
+from datetime import datetime
 import pytest
+import pytz
 
 from tests.factories.cause import CauseFactory, CampaignFactory, ActionFactory, LearningResourceFactory, NewsArticleFactory
 from causes.models import Campaign, Action, LearningResource
@@ -62,6 +64,18 @@ def test_complete_action_fails_if_not_authenticated(auth_client):
 
     response = auth_client.get(f'/actions/{action.pk}/')
     assert response.data['is_completed'] is False
+
+def test_get_news_article(auth_client):
+    article = NewsArticleFactory.create(
+        title="abc",
+        published_at=datetime(2020, 5, 17, tzinfo=pytz.UTC),
+    )
+
+    response = auth_client.get(f'/news_articles/{article.pk}/')
+
+    assert response.data['title'] == "abc"
+    assert response.data['published_at'] == "2020-05-17T00:00:00Z"
+    assert response.data['published_at_timestamp'] == 1589673600
 
 def test_complete_news_article(auth_client):
     article = NewsArticleFactory.create()
