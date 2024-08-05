@@ -20,14 +20,15 @@ class NowuTokenAuthentication(TokenAuthentication):
         # If user with that sub exists, create
         # username = payload['sub'] 
 
-        # TODO For now we should store the sub
-
         email = payload['email']
+        auth_id = payload['sub']
 
         try:
             user = User.objects.get(email=email)
+            if user.auth_id is None:
+                user.auth_id = auth_id
+                user.save()
         except User.DoesNotExist:
-            # TODO add auth_id to model
-            user = User.objects.create_user(email, auth_id=payload['sub'])
+            user = User.objects.create_user(email, auth_id=auth_id)
 
         return user, key
