@@ -23,6 +23,7 @@ class CausesUserView(generics.RetrieveUpdateAPIView):
 
 class DeleteUserView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
 
     def get_object(self):
         return self.request.user

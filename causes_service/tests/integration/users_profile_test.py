@@ -44,6 +44,7 @@ def test_delete_me(mock_get_supabase_client, auth_client):
     response = auth_client.post(f'/learning_resources/{learning_resources[0].pk}/complete/')
 
     assert response.status_code == 200
+    assert response.data == { "status": "ok" }
 
     response = auth_client.delete('/me/delete/')
     assert response.status_code == 204
