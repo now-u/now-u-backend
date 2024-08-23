@@ -1,4 +1,4 @@
-django==4.2.2
+django==5.1
 djangorestframework==3.14.0
 Pillow==9.5.0
 grafana-django-saml2-auth==3.11.0
@@ -21,7 +21,7 @@ python-dotenv==1.0.0
 django-storages[azure]==1.13
 
 ## Admin
-django-admin-interface==0.26.0
+django-unfold==0.36.0
 
 django-cors-headers==4.2.0
 

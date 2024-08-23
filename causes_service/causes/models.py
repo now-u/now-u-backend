@@ -1,62 +1,10 @@
-from datetime import datetime
 from django.db import models
-from django.db.models import Q
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from users.models import User
 from images.models import Image
-from utils.models import TimeStampedMixin
+from utils.models import TimeStampedMixin, ReleaseControlMixin
 from utils.timestamp import datetimeToTimestamp
-
-class TimestampMixin(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-def filter_active_for_releaseable_queryset(
-    queryset: models.QuerySet | models.Manager,
-    is_active_at: datetime,
-    is_active=True,
-):
-    release_query = Q(release_at=None) | Q(release_at__lte=is_active_at)
-    end_query = Q(end_at=None) | Q(end_at__gte=is_active_at)
-    active_query = release_query & end_query
-    if not is_active:
-        active_query = ~active_query
-    return queryset.filter(active_query)
-
-class ReleaseControlManager(models.Manager):
-    def filter_active(self, is_active_at: datetime, is_active=True):
-        return filter_active_for_releaseable_queryset(self, is_active_at, is_active)
-
-class ReleaseControlMixin(TimeStampedMixin, models.Model):
-    release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'))
-    end_at = models.DateTimeField(help_text=_('The date from which this resource should no longer be available in the app. If not provided the reosurce will stay visible after its released'), null=True, blank=True)
-
-    objects = ReleaseControlManager()
-
-    # TODO Add to qury set
-    def active(self) -> bool:
-        # TODO Handle TZ
-        now = timezone.now()
-
-        if now < self.release_at:
-            return False
-
-        if self.end_at is not None and now > self.end_at:
-            return False
-
-        return True
-
-    @property
-    def release_at_timestamp(self) -> int:
-        return datetimeToTimestamp(self.release_at)
-
-    class Meta:
-        abstract = True
 
 class Cause(models.Model):
     class Icon(models.TextChoices):
@@ -96,7 +44,7 @@ class Theme(models.Model):
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE, null=True)
     campaigns = models.ManyToManyField('Campaign', related_name='themes', blank=True)
 
-class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
+class LearningResource(ReleaseControlMixin, TimeStampedMixin, models.Model):
     class Type(models.TextChoices):
         VIDEO = 'VIDEO', _('Video'),
         READING = 'READING', _('Reading')
@@ -129,7 +77,7 @@ class LearningResource(ReleaseControlMixin, TimestampMixin, models.Model):
     def __str__(self) -> str:
         return self.title
 
-class Action(ReleaseControlMixin, TimestampMixin, models.Model):
+class Action(ReleaseControlMixin, TimeStampedMixin, models.Model):
     class Type(models.TextChoices):
         VOLUNTEER = 'VOLUNTEER', _('Volunteer'),
         DONATE = 'DONATE', _('Donate'),
@@ -175,7 +123,7 @@ class Action(ReleaseControlMixin, TimestampMixin, models.Model):
     def __str__(self) -> str:
         return self.title
 
-class Campaign(ReleaseControlMixin, TimestampMixin, models.Model):
+class Campaign(ReleaseControlMixin, TimeStampedMixin, models.Model):
     title = models.CharField(max_length=100, unique=True)
     short_name = models.CharField(max_length=100)
     description = models.TextField()
@@ -225,7 +173,7 @@ class Campaign(ReleaseControlMixin, TimestampMixin, models.Model):
     def __str__(self) -> str:
         return self.title
 
-class NewsArticle(ReleaseControlMixin, TimestampMixin, models.Model):
+class NewsArticle(ReleaseControlMixin, TimeStampedMixin, models.Model):
     title = models.CharField(max_length=300)
     subtitle = models.CharField(max_length=300)
     source = models.CharField(max_length=300)
@@ -250,7 +198,7 @@ class NewsArticle(ReleaseControlMixin, TimestampMixin, models.Model):
     def __str__(self) -> str:
         return self.title
 
-class Organisation(ReleaseControlMixin, TimestampMixin, models.Model):
+class Organisation(ReleaseControlMixin, TimeStampedMixin, models.Model):
     class OrganisationType(models.TextChoices):
         CHARITY = 'CHARITY', _('Charity'),
         SOCIAL_ENTERPISE = 'SOCIAL_ENTERPRISE', _('Social Enterprise'),
@@ -273,22 +221,22 @@ class OrganisationExtraLink(models.Model):
     title = models.CharField(max_length=100)
     link = models.URLField()
 
-class UserAction(TimestampMixin, models.Model):
+class UserAction(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_actions')
     action = models.ForeignKey(Action, on_delete=models.CASCADE)
 
-class UserLearningResources(TimestampMixin, models.Model):
+class UserLearningResources(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_learning_resources')
     learning_resource = models.ForeignKey(LearningResource, on_delete=models.CASCADE)
 
-class UserNewsArticle(TimestampMixin, models.Model):
+class UserNewsArticle(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_news_articles')
     news_article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
 
-class UserCampaign(TimestampMixin, models.Model):
+class UserCampaign(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_campaigns')
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
-class UserCause(TimestampMixin, models.Model):
+class UserCause(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     cause = models.ForeignKey(Cause, on_delete=models.CASCADE)

@@ -1,0 +1,101 @@
+<!-- This is an example component -->
+<div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/typography@0.2.x/dist/typography.min.css"/>
+    </head>
+    <body>
+        <div class="max-w-4xl">
+            <div
+                x-data="markdown($refs.input.textContent)"
+                class="relative"
+                x-cloak
+            >
+                <div class="bg-gray-50 border border-b-0 border-gray-300 top-0 left-0 right-0 block rounded-t-md">
+                    <button type="button" class="py-2 px-4 inline-block text-gray-400 font-semibold" :class="{ 'text-indigo-600': tab === 'write' }" x-on:click.prevent="tab = 'write'; showConvertedMarkdown = false">Write</button>
+                    <button type="button" class="py-2 px-4 inline-block text-gray-400 font-semibold" :class="{ 'text-indigo-600': tab === 'preview' && showConvertedMarkdown === true }" x-on:click.prevent="tab = 'preview'; convertedMarkdown()">Preview</button>
+                </div>
+
+                <div x-show="!showConvertedMarkdown">
+                    <div>
+                        <textarea
+                            id="{{ field_name }}"
+                            x-ref="input"
+                            x-model="content"
+                            name="{{ field_name }}"
+                            class="{{ input_class }} min-h-[500px]"
+                            :class="{ '*:cursor-alias': dragover }"
+                            @dragover.prevent="dragover = true"
+                            @dragleave.prevent="dragover = false"
+                            @drop.prevent="drop"
+                        >{% if value %}{{ value }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div x-show="showConvertedMarkdown">
+                    <div
+                        x-html="convertedContent"
+                        class="{{ prose_class }} text-wrap"
+                    ></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/marked@0.3.6/lib/marked.js"></script>
+        <script>
+            function markdown(content) {
+                return {
+                    dragover: false,
+                    tab: 'write',
+                    content,
+                    showConvertedMarkdown: false,
+                    convertedContent: '',
+                    async convertedMarkdown() {
+                        this.convertedContent = await marked(this.content, { sanitize: true });
+                        this.showConvertedMarkdown = true;
+                    },
+                }
+            }
+
+            function drop(event) {
+              const files = [...event.dataTransfer.items]
+                    .filter(item => item.kind === 'file')
+                    .map(item => item.getAsFile())
+                    .filter(file => file !== undefined);
+
+              if (files.length === 0) {
+                return
+              }
+
+              if (files.some(file => !file.type.match('image.*'))) {
+                alert('Only images can be uploaded to blogs')
+                return
+              }
+
+              if (files.length > 1) {
+                alert('Only one file can be uploaded to a blog at a time')
+                return
+              }
+
+              const file = files[0];
+
+              const popupWindow = window.open("http://localhost:8000/admin/images/image/add/?_to_field=id&_popup=1&_markdown_field_id={{ field_name }}", undefined, 'resizable,height=500,width=500')
+
+              popupWindow.window.onload = function() {
+                const fileInput = popupWindow.document.getElementsByName('image')[0]
+
+                const dt = new DataTransfer()
+                dt.items.add(file)
+                fileInput.files = dt.files
+
+                fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                fileInput.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            }
+        </script>
+    </body>
+    </html>
+</div>

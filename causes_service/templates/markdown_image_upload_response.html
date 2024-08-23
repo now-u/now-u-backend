@@ -1,0 +1,37 @@
+<!-- This is an example component -->
+<div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="max-w-4xl">
+            <p> Image created. Uploading to blog... </p>
+        </div>
+
+        <script>
+            const markdownField = opener.document.getElementById("{{ markdown_field_id }}")
+            const cursorPosition = markdownField.selectionStart
+
+            // Get the text before and after the cursor position
+            const before = markdownField.value.substring(0, cursorPosition);
+            const after = markdownField.value.substring(cursorPosition, markdownField.value.length);
+
+            const imageText = `![{{alt_text}}]({{image_url}})`
+
+            // Insert the image text at the cursor position
+            markdownField.value = before + imageText + after;
+
+            // Set the cursor position to after the newly inserted text
+            markdownField.selectionStart = markdownField.selectionEnd = cursorPosition + imageText.length;
+
+            markdownField.dispatchEvent(new Event('change', { bubbles: true }));
+            markdownField.dispatchEvent(new Event('input', { bubbles: true }));
+
+            window.close()
+        </script>
+    </body>
+    </html>
+</div>

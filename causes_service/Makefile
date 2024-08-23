@@ -7,6 +7,12 @@ up:
 	docker-compose up -d
 	./manage.py runserver 0.0.0.0:8000
 
+styles-watch:
+	npx --yes tailwindcss -o static/css/ts-styles.css --watch --minify
+
+styles-build:
+	npx --yes tailwindcss -o static/css/ts-styles.css --minify
+
 test: ## Run component tests
 	pytest
 

@@ -1,12 +1,30 @@
+from typing import cast
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
+from django.template.response import TemplateResponse
+from unfold.admin import ModelAdmin
 
 from images.models import Image
 
-class ImageAdmin(admin.ModelAdmin):
+class ImageAdmin(ModelAdmin):
     list_display = ('id', 'internal_name', 'alt_text',)
     search_fields = ('internal_name', 'alt_text',)
+
+    def response_add(self, request, obj, post_url_continue=None):
+        image: Image = cast(Image, obj)
+        if "_markdown_field_id" in request.GET:
+            return TemplateResponse(
+                request,
+                "markdown_image_upload_response.html",
+                {
+                    "markdown_field_id": request.GET.get('_markdown_field_id'),
+                    "image_url": image.get_url(),
+                    "alt_text": image.alt_text,
+                },
+            )
+
+        return super().response_add(request, obj, post_url_continue)
 
 admin.site.register(Image, ImageAdmin)
 

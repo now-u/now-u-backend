@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
+from django.templatetags.static import static
 
 from pathlib import Path
 import sentry_sdk
@@ -49,6 +50,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -70,10 +74,10 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'images.apps.ImagesConfig',
     'faqs.apps.FaqConfig',
+    'blogs.apps.BlogsConfig',
 
     # Admin
-    'admin_interface',
-    'colorfield',
+    'unfold',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -352,3 +356,46 @@ class MEILISEARCH:
 class SUPABASE:
     URL = get_required_env('SUPABASE_URL')
     KEY = get_required_env('SUPABASE_KEY')
+
+UNFOLD = {
+    "SITE_TITLE": "now-u admin",
+    "SITE_HEADER": 'now-u admin',
+    "SITE_LOGO": {
+        "light": lambda _: static("now-u-logo-horizontal-orange.svg"),
+        "dark": lambda _: static("now-u-logo-horizontal-orange.svg"),
+    },
+    "COLORS": {
+        "primary": {
+            "50": "#FFFAF5",
+            "100": "#FFF8F0",
+            "200": "#FFEEDB",
+            "300": "#FFE7CC",
+            "400": "#FFC88A",
+            "500": "#FFA947",
+            "600": "#FF8A05",
+            "700": "#C76A00",
+            "800": "#854700",
+            "900": "#422300",
+            "950": "#1F1000",
+        },
+    },
+    "STYLES": [
+        lambda request: static("css/ts-styles.css"),
+    ],
+}
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": ["templates/"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]

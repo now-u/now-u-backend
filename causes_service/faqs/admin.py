@@ -1,8 +1,9 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 from faqs.models import Faq
 
-class FaqAdmin(admin.ModelAdmin):
+class FaqAdmin(ModelAdmin):
     list_display = ('question', 'answer')
     search_fields = ('question', 'answer')
 

@@ -2,26 +2,13 @@ from django.utils import timezone
 from datetime import datetime
 from typing import Any
 from django.contrib import admin
+from unfold.admin import ModelAdmin, TabularInline
 from django.http.request import HttpRequest
 from django.utils.translation import gettext_lazy as _
+from utils.models import filter_active_for_releaseable_queryset
+from admin.utils import split_release_info
 
-from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation, OrganisationExtraLink, Theme, filter_active_for_releaseable_queryset
-
-def split_release_info(fieldsets):
-    current_field: list[str] = fieldsets[0][1]['fields']
-
-    release_fields = ('release_at', 'end_at')
-    for field in release_fields:
-        current_field.remove(field)
-
-    return (
-        (None, {
-            'fields': current_field,
-        }),
-        ('Release Info', {
-            'fields': release_fields,
-        }),
-    )
+from .models import Cause, LearningResource, Action, Campaign, NewsArticle, Organisation, OrganisationExtraLink, Theme
 
 class ActiveListFilter(admin.SimpleListFilter):
     title = _("Active")
@@ -52,21 +39,21 @@ def end_now_action(modeladmin, request, queryset):
 #         model = Cause
 #         fields = '__all__'
 
-class CauseAdmin(admin.ModelAdmin):
+class CauseAdmin(ModelAdmin):
     # readonly_fields = ['header_image_preview']
     list_display = ('title', 'id')
     search_fields = ('title', 'description')
     filter_horizontal = ('themes', 'actions', 'learning_resources', 'campaigns', 'news_articles')
     # form = CauseAdminForm
 
-class ThemeAdmin(admin.ModelAdmin):
+class ThemeAdmin(ModelAdmin):
     list_display = ('title', 'id')
     search_fields = ('title',)
     filter_horizontal = ('campaigns',)
 
 # TODO Allow search by topic
-class ActionAdmin(admin.ModelAdmin):
-    class CauseInline(admin.TabularInline):
+class ActionAdmin(ModelAdmin):
+    class CauseInline(TabularInline):
         model = Cause.actions.through
         min_num = 1
         extra = 0
@@ -74,8 +61,6 @@ class ActionAdmin(admin.ModelAdmin):
     list_display = ('title', 'action_type', 'time', 'active', 'id')
     search_fields = ('title', 'what_description', 'why_description')
     list_filter = ('action_type', 'causes', ActiveListFilter)
-    # TODO Show causes on admin list
-    filter_horizontal = ('causes',)
     inlines = [CauseInline]
     actions = [end_now_action]
 
@@ -84,8 +69,8 @@ class ActionAdmin(admin.ModelAdmin):
         return split_release_info(raw_fieldsets)
 
 
-class CampaignAdmin(admin.ModelAdmin):
-    class CauseInline(admin.TabularInline):
+class CampaignAdmin(ModelAdmin):
+    class CauseInline(TabularInline):
         model = Cause.campaigns.through
         min_num = 1
         extra = 0
@@ -101,8 +86,8 @@ class CampaignAdmin(admin.ModelAdmin):
         fieldsets = super().get_fieldsets(request, obj)
         return split_release_info(fieldsets)
 
-class LearningResourceAdmin(admin.ModelAdmin):
-    class CauseInline(admin.TabularInline):
+class LearningResourceAdmin(ModelAdmin):
+    class CauseInline(TabularInline):
         model = Cause.learning_resources.through
         min_num = 1
         extra = 0
@@ -117,8 +102,8 @@ class LearningResourceAdmin(admin.ModelAdmin):
         fieldsets = super().get_fieldsets(request, obj)
         return split_release_info(fieldsets)
 
-class NewsArticleAdmin(admin.ModelAdmin):
-    class CauseInline(admin.TabularInline):
+class NewsArticleAdmin(ModelAdmin):
+    class CauseInline(TabularInline):
         model = Cause.news_articles.through
         min_num = 1
         extra = 0
@@ -133,11 +118,11 @@ class NewsArticleAdmin(admin.ModelAdmin):
         fieldsets = super().get_fieldsets(request, obj)
         return split_release_info(fieldsets)
 
-class OrganisationExtraLinkInline(admin.TabularInline):
+class OrganisationExtraLinkInline(TabularInline):
     model = OrganisationExtraLink
     extra = 0
 
-class OrganisationAdmin(admin.ModelAdmin):
+class OrganisationAdmin(ModelAdmin):
     list_display = ('name', 'id', 'active')
     search_fields = ('name',)
     list_filter = (ActiveListFilter,)

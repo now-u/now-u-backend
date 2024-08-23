@@ -1,5 +1,6 @@
 media/
 staticfiles/
+static/css/ts-styles.css
 # GoogleIDPMetadata.xml
 
 ### OSX ###
