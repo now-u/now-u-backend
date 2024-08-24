@@ -76,6 +76,14 @@ class User(AbstractUser):
 
     # TODO Add validation to make sure email is no null if active
 
+    def __str__(self) -> str:
+        if self.status.ACTIVE:
+            if self.email is None:
+                raise Exception("Active user must have an email")
+            return self.email
+        return "Deleted user"
+
+
     def set_selected_causes(self, cause_ids: list[int]):
         from causes.models import UserCause
         # TODO Check transaction
@@ -114,7 +122,6 @@ class User(AbstractUser):
         self.username = None
         self.name = None
         self.email = None
-        self.auth_id = None
         self.status = User.UserStatus.DELETED
         self.save()
 
