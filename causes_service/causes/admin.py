@@ -1,5 +1,4 @@
 from django.utils import timezone
-from datetime import datetime
 from typing import Any
 from django.contrib import admin
 from unfold.admin import ModelAdmin, TabularInline
@@ -21,7 +20,7 @@ class ActiveListFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
-        now = datetime.utcnow()
+        now = timezone.now()
         if self.value() == "Active":
             return filter_active_for_releaseable_queryset(queryset, is_active_at=now, is_active=True)
         elif self.value() == "Inavtive":

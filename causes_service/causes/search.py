@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.db.models.query import QuerySet
 import meilisearch
 from dataclasses import dataclass
@@ -50,7 +50,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=LearningResource,
         serializer=LearningResourceSerializer,
-        queryset=LearningResource.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
+        queryset=LearningResource.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='actions',
@@ -59,7 +59,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=Action,
         serializer=ListActionSerializer,
-        queryset=Action.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
+        queryset=Action.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='campaigns',
@@ -68,7 +68,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=Campaign,
         serializer=ListCampaignSerializer,
-        queryset=Campaign.objects.filter_active(is_active_at=datetime.now()).filter(causes__gte=1)
+        queryset=Campaign.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='news_articles',
@@ -77,6 +77,6 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp', 'published_at_timestamp'],
         model=NewsArticle,
         serializer=NewsArticleSerializer,
-        queryset=NewsArticle.objects.filter_active(is_active_at=datetime.now())
+        queryset=NewsArticle.objects.filter_active(is_active_at=timezone.now())
     ),
 ]
