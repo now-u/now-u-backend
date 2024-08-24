@@ -91,7 +91,7 @@ class User(AbstractUser):
     def unsubscribe_from_mailing_list(self):
         unsubscribe_from_mailing_list(self.email)
 
-    def delete(self):
+    def delete(self) -> None:
         """Remove identifiying information of user and mark as deleted.
 
         A user record should not be fully deleted as this breaks relationships for other models such as action completion. These relations are useful for aggreate statistics. Instead when a user requests to delete their account any identifiying data should be removed.
@@ -117,3 +117,4 @@ class User(AbstractUser):
         self.auth_id = None
         self.status = User.UserStatus.DELETED
         self.save()
+
