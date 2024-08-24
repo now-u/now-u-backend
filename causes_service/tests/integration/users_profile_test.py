@@ -56,5 +56,5 @@ def test_delete_me(mock_get_supabase_client, auth_client):
     user = User.objects.get(pk=auth_client.user.pk)
     assert user.name is None
     assert user.email is None
+    assert user.is_active is False
     assert user.auth_id == auth_client.user.auth_id
-    assert user.status == User.UserStatus.DELETED

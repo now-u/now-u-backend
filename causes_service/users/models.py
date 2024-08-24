@@ -56,17 +56,12 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     objects = UserManager()
 
-    class UserStatus(models.TextChoices):
-        ACTIVE = "ACTIVE"
-        DELETED = "DELETED"
-
     # TODO Remove username
     username = models.CharField(_('username'), max_length=254, null=True, blank=True)
     email = models.EmailField(_('email address'), unique=True, null=True, blank=True)
     auth_id = models.CharField(_('auth_id'), max_length=254, unique=True, null=True, blank=True)
     name = models.CharField(_("name"), max_length=150, blank=True, null=True)
     selected_causes = models.ManyToManyField('causes.Cause', through='causes.UserCause')
-    status = models.CharField(choices=UserStatus.choices, max_length=10, default=UserStatus.ACTIVE)
 
     first_name = None
     last_name = None
@@ -77,7 +72,7 @@ class User(AbstractUser):
     # TODO Add validation to make sure email is no null if active
 
     def __str__(self) -> str:
-        if self.status.ACTIVE:
+        if self.is_active:
             if self.email is None:
                 raise Exception("Active user must have an email")
             return self.email
@@ -106,7 +101,7 @@ class User(AbstractUser):
         """
         logger.info(f"Deleting user id={self.pk}")
 
-        if self.status == User.UserStatus.DELETED:
+        if not self.is_active:
             raise Exception("User already deleted")
 
         if self.auth_id is None:
@@ -122,6 +117,6 @@ class User(AbstractUser):
         self.username = None
         self.name = None
         self.email = None
-        self.status = User.UserStatus.DELETED
+        self.is_active = False
         self.save()
 
