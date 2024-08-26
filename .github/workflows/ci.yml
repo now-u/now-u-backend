@@ -50,7 +50,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: "{{defaultContext}}:causes_service"
+          context: ./causes_service
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
