@@ -47,5 +47,6 @@ jobs:
           cache: 'pip'
       - run: cp .env.example .env
       - run: pip install -r requirements.txt
+      - run: npm install @openapitools/openapi-generator-cli -g
       - run: make build
       - run: pytest
