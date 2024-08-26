@@ -31,6 +31,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
       - run: npm install @openapitools/openapi-generator-cli -g
       - run: make build
