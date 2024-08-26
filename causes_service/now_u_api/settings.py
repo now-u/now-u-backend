@@ -399,3 +399,7 @@ TEMPLATES = [
         },
     },
 ]
+
+class APP_LINKS_SERVICE:
+    URL = get_required_env('APP_LINKS_SERVICE_URL')
+    API_KEY = get_required_env('APP_LINKS_SERVICE_API_KEY')

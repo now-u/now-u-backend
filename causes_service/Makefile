@@ -7,6 +7,10 @@ up:
 	docker-compose up -d
 	./manage.py runserver 0.0.0.0:8000
 
+build:
+	make styles-build
+	make generate_app_links_client
+
 styles-watch:
 	npx --yes tailwindcss -o static/css/ts-styles.css --watch --minify
 
@@ -34,3 +38,6 @@ createsuperuser:
 populate_search_indexes:
 	./manage.py createMeilisearchIndex
 	./manage.py populateMeilisearchIndex
+
+generate_app_links_client:
+	cd app_links && make build

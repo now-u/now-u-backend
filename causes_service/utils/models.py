@@ -5,6 +5,18 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from utils.timestamp import datetimeToTimestamp
 
+class ShareableMixin(models.Model):
+    """Adds created_at and updated_at to a model
+
+    Both created at and updated at are automatically set.
+    """
+
+    link_id = models.UUIDField(null=True, blank=True)
+    link_url = models.URLField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
 class TimeStampedMixin(models.Model):
     """Adds created_at and updated_at to a model
 

@@ -6,7 +6,7 @@ pyjwt==2.7.0
 # TODO This adds 200mb to the image!! Is there a better way?
 psycopg2-binary==2.9.6
 
-meilisearch==0.28.0
+meilisearch==0.31.5
 mailchimp-marketing==3.0.80
 supabase==2.7.3
 
@@ -29,9 +29,6 @@ sentry-sdk[django]==1.38.0
 
 
 ## dev deps TODO move
-
-# TODO Remove once https://github.com/meilisearch/meilisearch-python/issues/789 resolved
-pydantic==1.10.10
 
 ### Testing deps
 pytest==7.4.0

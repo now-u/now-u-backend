@@ -1,8 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from app_links_client.models.link_data import LinkData
+
 from users.models import User
 from images.models import Image
+from utils.app_links import create_app_links_client
 from utils.models import TimeStampedMixin, ReleaseControlMixin
 from utils.timestamp import datetimeToTimestamp
 
@@ -34,6 +37,19 @@ class Cause(models.Model):
 
     def select(self, user_id: str):
         UserCause.objects.create(user_id=user_id, cause=self)
+
+    def generate_link(self):
+        client = create_app_links_client()
+        client.links_post(
+            link_data=LinkData(
+                title=self.title,
+                description=self.description,
+                image_url=self.header_image.get_url(),
+                android_destination="https://play.google.com/store/apps/details?id=com.nowu.app",
+                ios_destination="https://apps.apple.com/us/app/now-u/id1516126639",
+                web_destination="now-u.com/causes",
+            )
+        )
 
     def __str__(self) -> str:
         return self.title

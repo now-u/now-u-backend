@@ -3,6 +3,11 @@ staticfiles/
 static/css/ts-styles.css
 # GoogleIDPMetadata.xml
 
+app_links/*
+!app_links/Makefile
+!app_links/openapi-generator-config.yaml
+!app_links/openapitools.json
+
 ### OSX ###
 .DS_Store
 .AppleDouble
