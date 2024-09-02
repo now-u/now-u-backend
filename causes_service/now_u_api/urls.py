@@ -17,6 +17,7 @@ Including another URLconf
 from causes import views as causeViews
 from users import views as userViews
 from faqs import views as faqViews
+from blogs import views as blogViews
 import django_saml2_auth.views
 from now_u_api import settings
 
@@ -29,6 +30,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 router = routers.DefaultRouter()
 router.register(r'actions', causeViews.ActionViewSet, basename='action')
 router.register(r'causes', causeViews.CauseViewSet)
+router.register(r'blogs', blogViews.BlogViewSet)
 router.register(r'learning_resources', causeViews.LearningResourceViewSet, basename="learning_resources")
 router.register(r'campaigns', causeViews.CampaignViewSet, basename="campaigns")
 router.register(r'organisations', causeViews.OrganisationViewSet, basename="organisations")
