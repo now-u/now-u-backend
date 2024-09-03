@@ -15,6 +15,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 class BlogSerializer(serializers.ModelSerializer):
     release_at_timestamp = serializers.IntegerField()
     authors = AuthorSerializer(many=True)
+    header_image = ImageSerializer()
 
     class Meta:
         model = Blog
