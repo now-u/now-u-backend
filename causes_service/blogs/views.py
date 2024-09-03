@@ -1,8 +1,12 @@
+from django.utils import timezone
 from rest_framework import viewsets
 
 from .models import Blog
 from .serializers import BlogSerializer
 
 class BlogViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+
+    def get_queryset(self):
+        return Blog.objects.filter_active(is_active_at=timezone.now())
+

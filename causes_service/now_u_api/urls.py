@@ -29,8 +29,8 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
 router = routers.DefaultRouter()
 router.register(r'actions', causeViews.ActionViewSet, basename='action')
-router.register(r'causes', causeViews.CauseViewSet)
-router.register(r'blogs', blogViews.BlogViewSet)
+router.register(r'causes', causeViews.CauseViewSet, basename='causes')
+router.register(r'blogs', blogViews.BlogViewSet, basename='blogs')
 router.register(r'learning_resources', causeViews.LearningResourceViewSet, basename="learning_resources")
 router.register(r'campaigns', causeViews.CampaignViewSet, basename="campaigns")
 router.register(r'organisations', causeViews.OrganisationViewSet, basename="organisations")

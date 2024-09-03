@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 
+from images.models import Image
 from users.mailing_list import subscribe_to_mailing_list, unsubscribe_from_mailing_list
 from utils.supabase import get_supabase_client
 
@@ -65,6 +66,9 @@ class User(AbstractUser):
 
     first_name = None
     last_name = None
+
+    blog_profile_picture = models.ForeignKey(Image, on_delete=models.CASCADE, null=True, blank=True)
+    blog_profile_description = models.TextField(null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
