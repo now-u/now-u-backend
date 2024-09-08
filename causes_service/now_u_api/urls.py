@@ -52,6 +52,8 @@ urlpatterns = [
 
     re_path(r'^saml2_auth/', include('django_saml2_auth.urls')),
     re_path(r'^admin/login/$', django_saml2_auth.views.signin),
+
+    path(r'health/', include('health_check.urls')),
 ]
 
 # In debug mode we serve static files

@@ -90,6 +90,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_saml2_auth',
+
+    # Health checks
+    'health_check',
+    'health_check.db',
+    'health_check.storage',
+    'health_check.contrib.migrations',
 ]
 
 MIDDLEWARE = [

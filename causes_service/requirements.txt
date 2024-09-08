@@ -27,6 +27,7 @@ django-cors-headers==4.2.0
 
 sentry-sdk[django]==1.38.0
 
+django-health-check==3.18.3
 
 ## dev deps TODO move
 
