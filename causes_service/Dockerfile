@@ -16,7 +16,6 @@ RUN apt-get update -y && \
 RUN pip install gunicorn
 
 COPY ./app_links/generated_client/requirements.txt /app/app_links/generated_client/requirements.txt
-RUN pwd && ls && ls /app/app_links && echo printing && ls /app/app_links/generated_client && cat /app/app_links/generated_client/requirements.txt
 RUN pip install -r /app/app_links/generated_client/requirements.txt
 
 COPY ./entrypoint.sh .
