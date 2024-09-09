@@ -10,7 +10,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['name', 'description', 'picture']
+        fields = ['id', 'name', 'description', 'picture']
 
 class BlogSerializer(serializers.ModelSerializer):
     release_at_timestamp = serializers.IntegerField()

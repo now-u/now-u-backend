@@ -8,6 +8,7 @@ pytestmark = pytest.mark.django_db
 def test_get_blog(client):
     authors = [
         UserFactory(
+            id = 10,
             name="John Doe",
             blog_profile_description="I am an avid blogger",
         ),
@@ -20,5 +21,6 @@ def test_get_blog(client):
     assert response.status_code == 200
     assert response.data['id'] == 1
     assert len(response.data['authors']) == 2
+    assert response.data['authors'][0]['id'] == 10
     assert response.data['authors'][0]['name'] == "John Doe"
     assert response.data['authors'][0]['description'] == "I am an avid blogger"
