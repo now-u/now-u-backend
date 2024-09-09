@@ -264,7 +264,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # TODO Add base authentication class which lets you authenticate if you are logged into admin
         'now_u_api.authentication.NowuTokenAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
 }
 
 SPECTACULAR_SETTINGS = {
