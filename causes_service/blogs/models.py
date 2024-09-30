@@ -24,3 +24,9 @@ class Blog(ReleaseControlMixin, models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['-release_at']),
+        ]
+

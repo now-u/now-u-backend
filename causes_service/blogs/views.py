@@ -9,5 +9,5 @@ class BlogViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
 
     def get_queryset(self):
-        return Blog.objects.filter_active(is_active_at=timezone.now())
+        return Blog.objects.filter_active(is_active_at=timezone.now()).order_by('-release_at')
 
