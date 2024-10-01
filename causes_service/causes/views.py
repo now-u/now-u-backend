@@ -14,6 +14,7 @@ from .serializers import CauseSerializer, LearningResourceSerializer, ActionSeri
 class CauseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Cause.objects.all()
     serializer_class = CauseSerializer
+    pagination_class = None
 
     # TODO Make bulk
     @extend_schema("causes_select", request=CauseIdsSerializer)
