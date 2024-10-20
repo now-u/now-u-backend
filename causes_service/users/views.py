@@ -1,11 +1,16 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.serializers import BaseSerializer
 
-from .serializers import CausesUserSerializer, UserProfileSerializer
+from .serializers import CausesUserSerializer, UserProfileGetSerializer, UserProfileUpdateSerializer
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
+
+    def get_serializer_class(self) -> type[BaseSerializer]:
+        if self.request.method in ["PUT", "POST", "PATCH"]:
+            return UserProfileUpdateSerializer
+        return UserProfileGetSerializer
 
     def get_object(self):
         return self.request.user
@@ -23,7 +28,7 @@ class CausesUserView(generics.RetrieveUpdateAPIView):
 
 class DeleteUserView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileGetSerializer
 
     def get_object(self):
         return self.request.user
