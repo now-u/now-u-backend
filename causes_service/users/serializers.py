@@ -4,16 +4,22 @@ from rest_framework import serializers
 from users.models import User
 from causes.models import Cause
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(min_length=1, max_length=150)
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(min_length=1, max_length=150, required=True, allow_blank=False)
 
     def update(self, instance, validated_data: Any):
         return super().update(instance, validated_data)
 
     class Meta:
         model = User
+        fields = ['id', 'name']
+
+class UserProfileGetSerializer(serializers.ModelSerializer):
+    email = serializers.CharField()
+
+    class Meta:
+        model = User
         fields = ['id', 'email', 'name']
-        read_only_fields = ['email']
 
 class CausesUserSerializer(serializers.ModelSerializer):
     selected_causes_ids = serializers.PrimaryKeyRelatedField(many=True, source='selected_causes', queryset=Cause.objects.all())
