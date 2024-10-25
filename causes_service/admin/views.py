@@ -37,6 +37,7 @@ def dashboard_callback(request, context):
             ))
         )\
         .order_by('completed_count')\
+        .reverse()\
         .filter(completed_count__gt=0)\
         [:10]
 
@@ -48,6 +49,7 @@ def dashboard_callback(request, context):
             ))
         )\
         .order_by('completed_count')\
+        .reverse()\
         .filter(completed_count__gt=0)\
         [:10]
 
@@ -115,10 +117,10 @@ def compute_completion_data(model: Type[TimeStampedMixin], now: datetime) -> Com
 
 def get_footer_color(percentage_increase: float | None):
     if percentage_increase is None:
-        return 'white'
+        return ''
     if percentage_increase > 0:
-        return 'text-green-700'
-    return 'text-red-700'
+        return 'text-green-700 dark:text-green-400'
+    return 'text-red-700 dark:text-red-400'
 
 def get_footer_text_value(percentage_increase: float | None):
     if percentage_increase is None:
@@ -131,4 +133,4 @@ def build_footer(percentage_increase: float | None):
     text_color = get_footer_color(percentage_increase)
     text_value = get_footer_text_value(percentage_increase)
 
-    return mark_safe(f'<strong class="{text_color} font-semibold dark:text-green-400">{text_value}</strong>&nbsp;progress from last week')
+    return mark_safe(f'<strong class="{text_color} font-semibold">{text_value}</strong>&nbsp;progress from last week')
