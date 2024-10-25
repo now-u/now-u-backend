@@ -1,10 +1,10 @@
-from django.utils import timezone
 from django.db.models.query import QuerySet
 import meilisearch
 from dataclasses import dataclass
 from django.db.models.base import ModelBase
 from rest_framework.serializers import SerializerMetaclass
 from rest_framework.renderers import JSONRenderer
+from datetime import datetime
 
 from causes.models import Action, LearningResource, Campaign, NewsArticle
 from causes.serializers import ListActionSerializer, LearningResourceSerializer, ListCampaignSerializer, NewsArticleSerializer
@@ -20,11 +20,15 @@ class ModelSearchIndex:
     # TODO Make sure the queryset matches the type of the model
     queryset: QuerySet
 
-    def populate_search_index(self, client: meilisearch.Client):
-        serializer = self.serializer(self.queryset.all(), many=True) # type: ignore
+    def populate_search_index(self, client: meilisearch.Client, now: datetime):
+        # Add active resources
+        serializer = self.serializer(self.queryset.filter_active(is_active_at=now), many=True) # type: ignore
         json = JSONRenderer().render(serializer.data)
         index = client.index(self.index_name)
         index.add_documents(json)
+
+        # Remove inactive resources
+        index.delete_documents(self.queryset.filter_active(is_active_at=now, is_active=False).values_list("pk", flat=True))
 
     def create_search_index(self, client: meilisearch.Client):
         client.create_index(self.index_name, { 'primaryKey': 'id' })
@@ -50,7 +54,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=LearningResource,
         serializer=LearningResourceSerializer,
-        queryset=LearningResource.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
+        queryset=LearningResource.objects.filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='actions',
@@ -59,7 +63,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=Action,
         serializer=ListActionSerializer,
-        queryset=Action.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
+        queryset=Action.objects.filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='campaigns',
@@ -68,7 +72,7 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=Campaign,
         serializer=ListCampaignSerializer,
-        queryset=Campaign.objects.filter_active(is_active_at=timezone.now()).filter(causes__gte=1)
+        queryset=Campaign.objects.filter(causes__gte=1)
     ),
     ModelSearchIndex(
         index_name='news_articles',
@@ -77,6 +81,6 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp', 'published_at_timestamp'],
         model=NewsArticle,
         serializer=NewsArticleSerializer,
-        queryset=NewsArticle.objects.filter_active(is_active_at=timezone.now())
+        queryset=NewsArticle.objects.all()
     ),
 ]
