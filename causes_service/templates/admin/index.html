@@ -1,0 +1,56 @@
+{% extends 'unfold/layouts/base_simple.html' %}
+
+{% load cache i18n unfold %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block title %}
+    {% if subtitle %}
+        {{ subtitle }} |
+    {% endif %}
+
+    {{ title }} | {{ site_title|default:_('Django site admin') }}
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}">
+            {{ site_header|default:_('Django administration') }}
+        </a>
+    </h1>
+{% endblock %}
+
+{% block content %}
+    {% component "unfold/components/container.html" with class="grid grid-cols-4 lg:grid-cols-12 gap-6"  %}
+        {% for stats in kpi %}
+            {% trans "Last 7 days" as label %}
+            {% component "unfold/components/card.html" with class="col-span-4" label=label footer=stats.footer %}
+                {% component "unfold/components/text.html" %}
+                    {{ stats.title }}
+                {% endcomponent %}
+
+                {% component "unfold/components/title.html" %}
+                    {{ stats.metric }}
+                {% endcomponent %}
+            {% endcomponent %}
+        {% endfor %}
+
+        {% component "unfold/components/card.html" with class="col-span-6" title="Top actions by completion last week" %}
+            {% component "unfold/components/flex.html" with col=1 class="gap-5" %}
+                {% for action in top_actions %}
+                    {% component "unfold/components/progress.html" with title=action.title description=action.completed_count value=action.percentage_of_top %}{% endcomponent %}
+                {% endfor %}
+            {% endcomponent %}
+        {% endcomponent %}
+
+        {% component "unfold/components/card.html" with class="col-span-6" title="Top learning resources by completion last week" %}
+            {% component "unfold/components/flex.html" with col=1 class="gap-5" %}
+                {% for item in top_learning_resources %}
+                    {% component "unfold/components/progress.html" with title=item.title description=item.completed_count value=item.percentage_of_top %}{% endcomponent %}
+                {% endfor %}
+            {% endcomponent %}
+        {% endcomponent %}
+
+    {% endcomponent %}
+
+{% endblock %}

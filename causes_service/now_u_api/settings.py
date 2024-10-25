@@ -390,6 +390,7 @@ UNFOLD = {
     "STYLES": [
         lambda request: static("css/ts-styles.css"),
     ],
+    "DASHBOARD_CALLBACK": "admin.views.dashboard_callback",
 }
 
 TEMPLATES = [

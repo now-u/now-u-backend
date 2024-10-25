@@ -239,11 +239,11 @@ class OrganisationExtraLink(models.Model):
 
 class UserAction(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_actions')
-    action = models.ForeignKey(Action, on_delete=models.CASCADE)
+    action = models.ForeignKey(Action, on_delete=models.CASCADE, related_name='completions')
 
 class UserLearningResources(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_learning_resources')
-    learning_resource = models.ForeignKey(LearningResource, on_delete=models.CASCADE)
+    learning_resource = models.ForeignKey(LearningResource, on_delete=models.CASCADE, related_name='completions')
 
 class UserNewsArticle(TimeStampedMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='completed_news_articles')
