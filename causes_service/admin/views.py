@@ -60,7 +60,7 @@ def dashboard_callback(request, context):
                 {
                     "title": item.title,
                     "completed_count": item.completed_count,
-                    "percentage_of_top": round((item.completed_count / top_actions[0].completed_count) * 100, 1),
+                    "percentage_of_top": (item.completed_count / top_actions[0].completed_count) * 100,
                 }
                 for item in top_actions
             ],
@@ -68,7 +68,7 @@ def dashboard_callback(request, context):
                 {
                     "title": item.title,
                     "completed_count": item.completed_count,
-                    "percentage_of_top": round((item.completed_count / top_learning_resources[0].completed_count) * 100, 1),
+                    "percentage_of_top": (item.completed_count / top_learning_resources[0].completed_count) * 100,
                 }
                 for item in top_learning_resources
             ],
@@ -108,7 +108,7 @@ def compute_completion_data(model: Type[TimeStampedMixin], now: datetime) -> Com
         created_at__lt=start_date
     ).count()
 
-    percentage_increase = ((num_completed_last_week - num_completed_last_last_week) / num_completed_last_last_week) * 100 if num_completed_last_last_week != 0 else None
+    percentage_increase = round(((num_completed_last_week - num_completed_last_last_week) / num_completed_last_last_week) * 100) if num_completed_last_last_week != 0 else None
 
     return CompletetionData(
         num_completed_last_week=num_completed_last_week,
