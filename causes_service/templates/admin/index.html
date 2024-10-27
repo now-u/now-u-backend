@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block content %}
-    {% component "unfold/components/container.html" with class="grid grid-cols-4 lg:grid-cols-12 gap-6"  %}
+    {% component "unfold/components/container.html" with class="grid grid-cols-4 lg:grid-cols-12 gap-6 mb-6"  %}
         {% for stats in kpi %}
             {% trans "Last 7 days" as label %}
             {% component "unfold/components/card.html" with class="col-span-4" label=label footer=stats.footer %}

@@ -8,6 +8,7 @@ from datetime import datetime
 
 from causes.models import Action, LearningResource, Campaign, NewsArticle
 from causes.serializers import ListActionSerializer, LearningResourceSerializer, ListCampaignSerializer, NewsArticleSerializer
+from utils.models import filter_active_for_releaseable_queryset
 
 @dataclass
 class ModelSearchIndex:
@@ -22,13 +23,13 @@ class ModelSearchIndex:
 
     def populate_search_index(self, client: meilisearch.Client, now: datetime):
         # Add active resources
-        serializer = self.serializer(self.queryset.filter_active(is_active_at=now), many=True) # type: ignore
+        serializer = self.serializer(filter_active_for_releaseable_queryset(self.queryset, now), many=True) # type: ignore
         json = JSONRenderer().render(serializer.data)
         index = client.index(self.index_name)
         index.add_documents(json)
 
         # Remove inactive resources
-        index.delete_documents(self.queryset.filter_active(is_active_at=now, is_active=False).values_list("pk", flat=True))
+        index.delete_documents(filter_active_for_releaseable_queryset(self.queryset, is_active_at=now, is_active=False).values_list("pk", flat=True))
 
     def create_search_index(self, client: meilisearch.Client):
         client.create_index(self.index_name, { 'primaryKey': 'id' })

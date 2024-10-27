@@ -60,7 +60,7 @@ def dashboard_callback(request, context):
                 {
                     "title": item.title,
                     "completed_count": item.completed_count,
-                    "percentage_of_top": (item.completed_count / top_actions[0].completed_count) * 100,
+                    "percentage_of_top": round((item.completed_count / top_actions[0].completed_count) * 100, 1),
                 }
                 for item in top_actions
             ],
@@ -68,7 +68,7 @@ def dashboard_callback(request, context):
                 {
                     "title": item.title,
                     "completed_count": item.completed_count,
-                    "percentage_of_top": (item.completed_count / top_learning_resources[0].completed_count) * 100,
+                    "percentage_of_top": round((item.completed_count / top_learning_resources[0].completed_count) * 100, 1),
                 }
                 for item in top_learning_resources
             ],
