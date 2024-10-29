@@ -331,6 +331,7 @@ SAML2_AUTH = {
     'GROUPS_MAP': {
         'campaigns': 'Campaigns',
         'dev': 'Development',
+        'Marketing & Comms': 'Marketing',
     },
     # 'AUTHN_REQUESTS_SIGNED': False,
     # 'WANT_ASSERTIONS_SIGNED': True,
