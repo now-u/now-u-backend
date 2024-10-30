@@ -327,7 +327,7 @@ SAML2_AUTH = {
         'groups': 'Groups',
     },
     # TODO Setup seeds for these groups with correct perms
-    # TODO If not already done, before login, if user exists update their group memberships
+    # NOTE: This must be in sync with https://admin.google.com/u/2/ac/apps/saml/610221347403/attrmapping
     'GROUPS_MAP': {
         'campaigns': 'Campaigns',
         'dev': 'Development',
