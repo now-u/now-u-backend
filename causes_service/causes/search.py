@@ -93,6 +93,6 @@ SEARCH_INDICIES = [
         sortable_attributes=['release_at_timestamp'],
         model=Blog,
         serializer=BlogSerializer,
-        queryset=Blog.objects.filter_active(is_active_at=timezone.now())
+        queryset=Blog.objects.all()
     )
 ]
