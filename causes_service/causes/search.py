@@ -9,6 +9,8 @@ from datetime import datetime
 from causes.models import Action, LearningResource, Campaign, NewsArticle
 from causes.serializers import ListActionSerializer, LearningResourceSerializer, ListCampaignSerializer, NewsArticleSerializer
 from utils.models import filter_active_for_releaseable_queryset
+from blogs.models import Blog
+from blogs.serializers import BlogSerializer
 
 @dataclass
 class ModelSearchIndex:
@@ -84,4 +86,13 @@ SEARCH_INDICIES = [
         serializer=NewsArticleSerializer,
         queryset=NewsArticle.objects.all()
     ),
+    ModelSearchIndex(
+        index_name='blogs',
+        searchable_attributes=['title','authors.name','body'],
+        filterable_attributes=['authors.id'],
+        sortable_attributes=['release_at_timestamp'],
+        model=Blog,
+        serializer=BlogSerializer,
+        queryset=Blog.objects.filter_active(is_active_at=timezone.now())
+    )
 ]
