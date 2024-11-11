@@ -82,7 +82,7 @@
 
               const file = files[0];
 
-              const popupWindow = window.open("http://localhost:8000/admin/images/image/add/?_to_field=id&_popup=1&_markdown_field_id={{ field_name }}", undefined, 'resizable,height=500,width=500')
+              const popupWindow = window.open("{{ base_url }}/admin/images/image/add/?_to_field=id&_popup=1&_markdown_field_id={{ field_name }}", undefined, 'resizable,height=500,width=500')
 
               popupWindow.window.onload = function() {
                 const fileInput = popupWindow.document.getElementsByName('image')[0]

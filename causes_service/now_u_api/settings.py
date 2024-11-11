@@ -40,7 +40,7 @@ sentry_sdk.init(
     profiles_sample_rate=1.0 if DEBUG else 0.1,
 )
 
-BASE_URL = os.getenv('BASE_URL', 'http://192.168.1.11:8000')
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:8000')
 
 print(f"{BASE_URL=}")
 
