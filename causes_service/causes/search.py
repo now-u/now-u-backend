@@ -31,7 +31,18 @@ class ModelSearchIndex:
         index.add_documents(json)
 
         # Remove inactive resources
-        index.delete_documents(filter_active_for_releaseable_queryset(self.queryset, is_active_at=now, is_active=False).values_list("pk", flat=True))
+        inactive_ids = filter_active_for_releaseable_queryset(
+        self.queryset, is_active_at=now, is_active=False
+        ).values_list("pk", flat=True)
+
+        # Ensure the list is not empty and all items are strings
+        inactive_ids = [str(id) for id in inactive_ids if id is not None]
+
+        # Delete documents only if there are IDs to delete
+        if inactive_ids:
+            index = client.index(self.index_name)
+            index.delete_documents(inactive_ids)
+
 
     def create_search_index(self, client: meilisearch.Client):
         client.create_index(self.index_name, { 'primaryKey': 'id' })
