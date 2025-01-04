@@ -29,9 +29,9 @@ class TimeStampedMixin(models.Model):
     class Meta:
         abstract = True
 
-def filter_for_unreleased_queryset(queryset: models.QuerySet | models.Manager, is_active_at: datetime):
+def filter_released_for_releaseable_queryset(queryset: models.QuerySet | models.Manager, is_released_at: datetime):
     return queryset.filter(
-        Q(release_at__lte=is_active_at)  
+        Q(release_at__lte=is_released_at)  
     )
 
 def filter_active_for_releaseable_queryset(
@@ -49,8 +49,8 @@ def filter_active_for_releaseable_queryset(
 class ReleaseControlManager(models.Manager):
     def filter_active(self, is_active_at: datetime, is_active=True):
         return filter_active_for_releaseable_queryset(self, is_active_at, is_active)
-    def filter_unreleased(self, is_active_at: datetime):
-        return filter_for_unreleased_queryset(self, is_active_at)
+    def filter_released(self, is_released_at: datetime):
+        return filter_released_for_releaseable_queryset(self, is_released_at)
 
 class ReleaseControlMixin(TimeStampedMixin, models.Model):
     release_at = models.DateTimeField(help_text=_('The date from which this resource should be available in the app. If not provided the resource will not be visible'))

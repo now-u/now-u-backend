@@ -26,7 +26,7 @@ class CauseViewSet(viewsets.ReadOnlyModelViewSet):
 
 class ActionViewSet(viewsets.ReadOnlyModelViewSet):
     # TODO Move this to get_query because idk when datetime.now is called!
-    queryset = Action.objects.filter_unreleased(is_active_at=timezone.now())
+    queryset = Action.objects.filter_released(is_released_at=timezone.now())
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -58,7 +58,7 @@ class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Try and fix these types
         if (user is not None and user.is_staff):
             return LearningResource.objects.all()
-        return LearningResource.objects.filter_unreleased(is_active_at=timezone.now())
+        return LearningResource.objects.filter_released(is_released_at=timezone.now())
 
     @extend_schema(operation_id="learning_resources_complete", request=None, responses=None)
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
@@ -70,7 +70,7 @@ class LearningResourceViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CampaignViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self) -> QuerySet[Campaign]:
-        return Campaign.objects.filter_unreleased(is_active_at=timezone.now())
+        return Campaign.objects.filter_released(is_released_at=timezone.now())
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -81,7 +81,7 @@ class NewsArticleViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NewsArticleSerializer
 
     def get_queryset(self) -> QuerySet[NewsArticle]:
-        return NewsArticle.objects.filter_unreleased(is_active_at=timezone.now())
+        return NewsArticle.objects.filter_released(is_released_at=timezone.now())
 
     @extend_schema(operation_id="news_article_complete", request=None, responses=None)
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
