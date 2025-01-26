@@ -17,7 +17,7 @@ class CauseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cause
         # TODO Selected, icon
-        fields = ['id', 'title', 'header_image', 'icon', 'description', 'is_selected']
+        fields = ['id', 'title', 'header_image', 'icon', 'description','long_description','is_selected']
 
 class ListActionSerializer(serializers.ModelSerializer):
     causes = CauseSerializer(many=True)
