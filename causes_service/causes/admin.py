@@ -41,7 +41,7 @@ def end_now_action(modeladmin, request, queryset):
 class CauseAdmin(ModelAdmin):
     # readonly_fields = ['header_image_preview']
     list_display = ('title', 'id')
-    search_fields = ('title', 'description')
+    search_fields = ('title', 'description','long_description')
     filter_horizontal = ('themes', 'actions', 'learning_resources', 'campaigns', 'news_articles')
     # form = CauseAdminForm
 

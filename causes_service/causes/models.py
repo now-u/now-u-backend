@@ -21,6 +21,7 @@ class Cause(models.Model):
     title = models.CharField(max_length=100, unique=True)
     icon = models.CharField(max_length=40, choices=Icon.choices)
     description = models.TextField()
+    long_description = models.TextField()
     header_image = models.ForeignKey(Image, on_delete=models.CASCADE)
 
     themes = models.ManyToManyField('Theme', related_name='causes', blank=True)
@@ -44,6 +45,7 @@ class Cause(models.Model):
             link_data=LinkData(
                 title=self.title,
                 description=self.description,
+                long_description= self.long_description,
                 image_url=self.header_image.get_url(),
                 android_destination="https://play.google.com/store/apps/details?id=com.nowu.app",
                 ios_destination="https://apps.apple.com/us/app/now-u/id1516126639",
