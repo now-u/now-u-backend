@@ -35,7 +35,7 @@ class Cause(models.Model):
         return self.header_image.image_preview()
     
     def secondary_image_preview(self):
-        return self.header_image.image_preview()
+        return self.secondary_image.image_preview()
 
     def is_selected(self, user_id: str) -> bool:
         return UserCause.objects.filter(user_id=user_id, cause=self).exists()
