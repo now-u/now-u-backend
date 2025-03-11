@@ -22,7 +22,8 @@ class Cause(models.Model):
     icon = models.CharField(max_length=40, choices=Icon.choices)
     description = models.TextField()
     long_description = models.TextField()
-    header_image = models.ForeignKey(Image, on_delete=models.CASCADE)
+    header_image = models.ForeignKey(Image, on_delete=models.CASCADE,related_name='cause_header_images')
+    secondary_image = models.ForeignKey(Image, on_delete=models.CASCADE,related_name='cause_secondary_images')
 
     themes = models.ManyToManyField('Theme', related_name='causes', blank=True)
     actions = models.ManyToManyField('Action', related_name='causes', blank=True)
@@ -31,6 +32,9 @@ class Cause(models.Model):
     news_articles = models.ManyToManyField('NewsArticle', related_name='causes', blank=True)
 
     def header_image_preview(self):
+        return self.header_image.image_preview()
+    
+    def secondary_image_preview(self):
         return self.header_image.image_preview()
 
     def is_selected(self, user_id: str) -> bool:
@@ -47,6 +51,7 @@ class Cause(models.Model):
                 description=self.description,
                 long_description= self.long_description,
                 image_url=self.header_image.get_url(),
+                secondaryimage_url=self.secondary_image.get_url(),
                 android_destination="https://play.google.com/store/apps/details?id=com.nowu.app",
                 ios_destination="https://apps.apple.com/us/app/now-u/id1516126639",
                 web_destination="now-u.com/causes",
