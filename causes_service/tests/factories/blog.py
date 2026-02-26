@@ -27,7 +27,7 @@ class BlogFactory(factory.django.DjangoModelFactory):
         model = Blog
 
     @factory.post_generation
-    def authors(self, create, extracted, **kwargs):
+    def authors(self, create, extracted, **kwargs): # noqa: F811
         if not create:
             # Simple build, or nothing to add, do nothing.
             return

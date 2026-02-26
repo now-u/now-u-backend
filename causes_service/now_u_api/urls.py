@@ -26,6 +26,7 @@ from django.urls import include, path, re_path
 from django.conf.urls.static import static
 from rest_framework import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from health_check.views import HealthCheckView
 
 router = routers.DefaultRouter()
 router.register(r'actions', causeViews.ActionViewSet, basename='action')
@@ -53,7 +54,15 @@ urlpatterns = [
     re_path(r'^saml2_auth/', include('django_saml2_auth.urls')),
     re_path(r'^admin/login/$', django_saml2_auth.views.signin),
 
-    path(r'health/', include('health_check.urls')),
+    path(
+        r'health/',
+        HealthCheckView.as_view(
+            checks=[
+                "health_check.Database",
+                "health_check.Storage",
+            ]
+        ),
+    ),
 ]
 
 # In debug mode we serve static files

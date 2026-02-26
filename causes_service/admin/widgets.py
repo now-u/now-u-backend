@@ -1,6 +1,5 @@
 from django.template.loader import get_template
-from unfold.admin import UnfoldAdminTextareaWidget
-from unfold.widgets import TEXTAREA_CLASSES, PROSE_CLASSES
+from unfold.widgets import TEXTAREA_CLASSES, PROSE_CLASSES, UnfoldAdminTextareaWidget
 
 from now_u_api.settings import BASE_URL
 

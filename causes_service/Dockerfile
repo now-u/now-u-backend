@@ -1,4 +1,4 @@
-FROM python:3.10.2-slim-bullseye
+FROM python:3.14.3-slim-trixie
 
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -9,7 +9,7 @@ WORKDIR /app
 COPY ./requirements.txt .
 
 RUN apt-get update -y && \
-    apt-get install -y netcat xmlsec1 && \
+    apt-get install -y build-essential netcat-openbsd xmlsec1 && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 
