@@ -93,9 +93,6 @@ INSTALLED_APPS = [
 
     # Health checks
     'health_check',
-    'health_check.db',
-    'health_check.storage',
-    'health_check.contrib.migrations',
 ]
 
 MIDDLEWARE = [

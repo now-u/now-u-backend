@@ -8,6 +8,7 @@ up:
 	./manage.py runserver 0.0.0.0:8000
 
 build:
+	npm install
 	make styles-build
 	make generate_app_links_client
 
