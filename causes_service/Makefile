@@ -12,10 +12,10 @@ build:
 	make generate_app_links_client
 
 styles-watch:
-	npx --yes tailwindcss -o static/css/ts-styles.css --watch --minify
+	npx --yes @tailwindcss/cli -i styles.css -o static/css/ts-styles.css --watch --minify
 
 styles-build:
-	npx --yes tailwindcss -o static/css/ts-styles.css --minify
+	npx --yes @tailwindcss/cli -i styles.css -o static/css/ts-styles.css --minify
 
 test: ## Run component tests
 	pytest
