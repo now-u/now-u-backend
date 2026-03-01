@@ -646,9 +646,14 @@ components:
         header_image:
           type: string
           format: uri
+        secondary_image:
+          type: string
+          format: uri
         icon:
           $ref: '#/components/schemas/IconEnum'
         description:
+          type: string
+        long_description:
           type: string
         is_selected:
           type: boolean
